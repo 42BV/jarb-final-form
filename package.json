@@ -1,0 +1,99 @@
+{
+  "name": "jarb-final-form",
+  "version": "0.0.1",
+  "description": "Validating forms through JaRB.",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/42BV/jarb-final-form.git"
+  },
+  "keywords": [
+    "JaRB",
+    "final-form",
+    "react-final-form"
+  ],
+  "author": "Maarten Hus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/42BV/jarb-final-form/issues"
+  },
+  "homepage": "https://github.com/42BV/jarb-final-form#readme",
+  "peerDependencies": {
+    "final-form": "^4.15.0",
+    "react-final-form": "^6.2.1"
+  },
+  "devDependencies": {
+    "@types/enzyme-adapter-react-16": "1.0.5",
+    "@types/fetch-mock": "7.2.3",
+    "@types/jest": "24.0.15",
+    "@types/react": "16.8.8",
+    "@types/react-dom": "16.8.3",
+    "@types/react-router-dom": "4.3.1",
+    "@typescript-eslint/eslint-plugin": "1.5.0",
+    "@typescript-eslint/parser": "1.5.0",
+    "enzyme": "3.9.0",
+    "enzyme-adapter-react-16": "1.11.2",
+    "eslint": "5.15.3",
+    "eslint-config-prettier": "4.1.0",
+    "eslint-plugin-prettier": "3.0.1",
+    "eslint-plugin-react": "7.12.4",
+    "fetch-mock": "7.3.1",
+    "jest": "24.8.0",
+    "prettier": "1.16.4",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "node-fetch": "2.3.0",
+    "ts-jest": "24.0.0",
+    "typescript": "3.3.4000",
+    "husky": "2.4.1",
+    "lint-staged": "8.1.5",
+    "final-form": "4.15.0",
+    "react-final-form": "6.2.1"
+  },
+  "scripts": {
+    "start": "jest test --watch",
+    "test": "npm run lint && jest test --coverage",
+    "coverage": "npm test -- --coverage",
+    "ts": "tsc --version && tsc",
+    "lint": "eslint \"src/**\"",
+    "prepare": "rm -rf lib && npm run lint && npm test && npm run ts"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.json"
+      }
+    },
+    "collectCoverage": true,
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "node"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "ts-jest"
+    },
+    "testRegex": "/tests/.*\\.(ts|tsx)$",
+    "testPathIgnorePatterns": [
+      "./tests/setupTest.ts"
+    ],
+    "setupFilesAfterEnv": [
+      "./tests/setupTest.ts"
+    ]
+  },
+  "lint-staged": {
+    "{src,tests}/**/*.{js,jsx,json,scss,ts,tsx}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
