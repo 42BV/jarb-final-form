@@ -1,6 +1,6 @@
 {
   "name": "jarb-final-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Validating forms through JaRB.",
   "files": [
     "lib"
