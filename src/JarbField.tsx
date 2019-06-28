@@ -162,7 +162,11 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
         validator(value, allValues, meta)
       );
       return Promise.all(promises).then(values => {
-        return values.filter(v => v !== undefined);
+        const errors = values.filter(v => v !== undefined);
+
+        // If there are no errors return undefined to indicate
+        // that everything is a-ok.
+        return errors.length === 0 ? undefined : errors;
       });
     };
 

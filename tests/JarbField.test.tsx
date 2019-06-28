@@ -46,7 +46,7 @@ describe('Component: JarbField', () => {
     setConstraints(constraints);
   }
 
-  describe('The validators prop', () => {
+  describe('the validators prop', () => {
     it('should when validators are provided by the user include them in the validation', async done => {
       setup(filledConstraints());
 
@@ -169,7 +169,7 @@ describe('Component: JarbField', () => {
     });
   });
 
-  describe('validators', () => {
+  describe('adding jarb validators', () => {
     test('string which is required, and has minimumLength and maximumLength', async done => {
       setup(filledConstraints());
 
@@ -303,6 +303,61 @@ describe('Component: JarbField', () => {
           const errors = await validate('Superman', {});
 
           expect(errors).toEqual(['numberFractions']);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+  });
+
+  describe('enhancedValidate', () => {
+    let validate: FieldValidator<number>;
+
+    beforeEach(() => {
+      setup({});
+
+      const isEven: FieldValidator<number> = value =>
+        value % 2 === 0 ? undefined : 'Not even';
+      const isSmallerThan10: FieldValidator<number> = value =>
+        value < 10 ? undefined : 'Bigger than 10';
+
+      const jarbField = shallow(
+        <JarbField
+          name="Name"
+          jarb={{ validator: 'Hero.name', label: 'Name' }}
+          validators={[isEven, isSmallerThan10]}
+          component="input"
+        />
+      );
+
+      // @ts-ignore
+      validate = jarbField.find(Field).props().validate;
+    });
+
+    it('should filter out results which return undefined so only errors remain', async done => {
+      if (validate) {
+        try {
+          const errors = await validate(12, {});
+
+          expect(errors).toEqual(['Bigger than 10']);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should when there are no errors return undefined', async done => {
+      if (validate) {
+        try {
+          const errors = await validate(2, {});
+
+          expect(errors).toEqual(undefined);
           done();
         } catch (error) {
           done.fail(error);
