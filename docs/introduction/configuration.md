@@ -1,0 +1,81 @@
+---
+layout: default
+title: Configuration
+description: 'Configuration instructions for jarb-final-form.'
+parent: Introduction
+permalink: /configuration
+nav_order: 2
+---
+
+## Back-end
+
+First in your Java project make sure jarb-final-form can read
+the constraints, via a GET request. This is easily done by 
+exposing the `BeanConstraintController` like so:
+
+```java
+package nl._42.seeder;
+
+import nl._42.jarb.constraint.EnableDatabaseConstraints;
+
+import nl._42.jarb.constraint.metadata.BeanConstraintController;
+import nl._42.jarb.constraint.metadata.BeanConstraintService;
+
+@SpringBootApplication
+@EnableDatabaseConstraints(basePackageClasses = Application.class)
+public class Application extends SpringBootServletInitializer {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public BeanConstraintController beanConstraintController(BeanConstraintService beanConstraintService) {
+        return new BeanConstraintController(beanConstraintService);
+    }
+}
+```
+
+## Front-end
+
+At the start of your project, in case you are using Create React
+App in the index.js, configure the constraints:
+
+```js
+import { configureConstraint } from 'jarb-final-form';
+
+configureConstraint({
+   // The URL which will provide the constraints over a GET request.
+  constraintsUrl: '/api/constraints',
+
+  // Whether or not the 'constraintsUrl' should be called with authentication.
+  needsAuthentication: true,
+});
+```
+
+The constraints module must be configured before the application
+is rendered.
+
+Finally you will have load the constraints from the back-end using
+the `loadConstraints` function. If in order for the constraints
+to be loaded you need to be logged in, you should load the constraints
+as soon as you know that you are logged in:
+
+```js
+import { loadConstraints } from 'jarb-final-form';
+import { login } from 'somewhere';
+
+class Login extends Component {
+  doLogin(username, password) {
+    login({ username, password })
+      .then(loadConstraints); // Load constraints ASAP
+  }
+
+  render() {
+    // Render here which calls doLogin
+  }
+}
+```
+
+If you do not need a login before you can fetch the constraints
+simply fetch them using `loadConstraints` as soon as possible.
