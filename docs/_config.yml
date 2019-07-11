@@ -1,4 +1,6 @@
-theme: jekyll-theme-tactile
-title: [jarb-final-form]
-description: [Validating forms through JaRB, with react-final-form.]
-show_downloads: false
+remote_theme: 42bv/fortytwo
+title: 'jarb-final-form'
+description: 'Validating forms through JaRB, with react-final-form'
+baseurl: /jarb-final-form/
+plugins:
+  - jekyll-remote-theme
