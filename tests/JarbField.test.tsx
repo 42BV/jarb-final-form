@@ -19,6 +19,9 @@ describe('Component: JarbField', () => {
       .spyOn(validators, 'makeRequired')
       .mockImplementation(() => () => 'required');
     jest
+      .spyOn(validators, 'makeBooleanRequired')
+      .mockImplementation(() => () => 'booleanRequired');
+    jest
       .spyOn(validators, 'makeMinimumLength')
       .mockImplementation(() => () => 'minimumLength');
     jest
@@ -311,6 +314,40 @@ describe('Component: JarbField', () => {
         done.fail();
       }
     });
+
+    test('boolean which is required', async done => {
+      setup(filledConstraints());
+
+      const jarbField = shallow(
+        <JarbField
+          name="Name"
+          jarb={{ validator: 'Hero.partOfHeroAssociation', label: 'Name' }}
+          component="input"
+        />
+      );
+
+      // Trigger the render again to check if it re-uses the validators correctly.
+      jarbField.setState({});
+
+      const { name, validate, component } = jarbField.find(Field).props();
+      expect(name).toBe('Name');
+      expect(component).toBe('input');
+
+      expect(validators.makeBooleanRequired).toHaveBeenCalledTimes(1);
+      expect(validators.makeBooleanRequired).toHaveBeenCalledWith('Name');
+      if (validate) {
+        try {
+          const errors = await validate('Superman', {});
+
+          expect(errors).toEqual(['booleanRequired']);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
   });
 
   describe('enhancedValidate', () => {
@@ -423,6 +460,19 @@ function filledConstraints(): Constraints {
         min: null,
         max: null,
         name: 'salary'
+      },
+      partOfHeroAssociation: {
+        javaType: 'boolean',
+        types: ['boolean'],
+        required: true,
+        minimumLength: null,
+        maximumLength: null,
+        fractionLength: null,
+        radix: null,
+        pattern: null,
+        min: null,
+        max: null,
+        name: 'partOfHeroAssociation'
       }
     }
   };

@@ -1,5 +1,6 @@
 import {
   makeRequired,
+  makeBooleanRequired,
   makeMinValue,
   makeMaxValue,
   makeMinimumLength,
@@ -7,162 +8,331 @@ import {
   makeNumber,
   makeNumberFraction
 } from '../src/validators';
+import { ValidationError } from '../src/errors';
 
-test('required', () => {
+type Validator = (
+  value: any,
+  form: any
+) => Promise<ValidationError | undefined>;
+
+interface CheckValidator {
+  value: any;
+  expected: any;
+}
+
+function makeValidatorChecker(
+  done: jest.DoneCallback,
+  validator: Validator
+): (options: CheckValidator) => Promise<any> {
+  return async function checkValidator(args: CheckValidator): Promise<any> {
+    const { value, expected } = args;
+
+    try {
+      const result = await validator(value, {});
+      expect(result).toEqual(expected);
+    } catch (e) {
+      done.fail(e);
+    }
+  };
+}
+
+test('required', async done => {
   const validator = makeRequired('Name');
 
-  expect(validator(undefined, {})).resolves.toEqual({
-    type: 'ERROR_REQUIRED',
-    label: 'Name',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: undefined,
-    reasons: { required: 'required' }
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: undefined,
+      reasons: { required: 'required' }
+    }
   });
 
-  expect(validator(null, {})).resolves.toEqual({
-    type: 'ERROR_REQUIRED',
-    label: 'Name',
+  checkValidator({
     value: null,
-    reasons: { required: 'required' }
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: null,
+      reasons: { required: 'required' }
+    }
   });
 
-  expect(validator('', {})).resolves.toEqual({
-    type: 'ERROR_REQUIRED',
-    label: 'Name',
+  checkValidator({
     value: '',
-    reasons: { required: 'required' }
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: '',
+      reasons: { required: 'required' }
+    }
   });
 
-  expect(validator('h', {})).resolves.toBe(undefined);
-  expect(validator('henkie', {})).resolves.toBe(undefined);
+  checkValidator({
+    value: true,
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: true,
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({
+    value: false,
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: false,
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({ value: 'h', expected: undefined });
+  checkValidator({ value: 'henkie', expected: undefined });
+
+  done();
 });
 
-test('minimumLength', () => {
+test('booleanRequired', async done => {
+  const validator = makeBooleanRequired('Name');
+
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
+    value: undefined,
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: undefined,
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({
+    value: null,
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: null,
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({
+    value: '',
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: '',
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({
+    value: false,
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: false,
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({ value: true, expected: undefined });
+
+  done();
+});
+
+test('minimumLength', async done => {
   const validator = makeMinimumLength('Description', 3);
 
-  expect(validator('', {})).resolves.toEqual({
-    type: 'ERROR_MINIMUM_LENGTH',
-    label: 'Description',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: '',
-    reasons: { minimumLength: 3 }
-  });
-  expect(validator('a', {})).resolves.toEqual({
-    type: 'ERROR_MINIMUM_LENGTH',
-    label: 'Description',
-    value: 'a',
-    reasons: { minimumLength: 3 }
-  });
-  expect(validator('aa', {})).resolves.toEqual({
-    type: 'ERROR_MINIMUM_LENGTH',
-    label: 'Description',
-    value: 'aa',
-    reasons: { minimumLength: 3 }
+    expected: {
+      type: 'ERROR_MINIMUM_LENGTH',
+      label: 'Description',
+      value: '',
+      reasons: { minimumLength: 3 }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator('aaa', {})).resolves.toBe(undefined);
-  expect(validator('aaaa', {})).resolves.toBe(undefined);
+  checkValidator({
+    value: 'a',
+    expected: {
+      type: 'ERROR_MINIMUM_LENGTH',
+      label: 'Description',
+      value: 'a',
+      reasons: { minimumLength: 3 }
+    }
+  });
+
+  checkValidator({
+    value: 'aa',
+    expected: {
+      type: 'ERROR_MINIMUM_LENGTH',
+      label: 'Description',
+      value: 'aa',
+      reasons: { minimumLength: 3 }
+    }
+  });
+
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: 'aaa', expected: undefined });
+  checkValidator({ value: 'aaaa', expected: undefined });
+
+  done();
 });
 
-test('maximumLength', () => {
+test('maximumLength', done => {
   const validator = makeMaximumLength('Info', 3);
 
-  expect(validator('aaaa', {})).resolves.toEqual({
-    type: 'ERROR_MAXIMUM_LENGTH',
-    label: 'Info',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: 'aaaa',
-    reasons: { maximumLength: 3 }
+    expected: {
+      type: 'ERROR_MAXIMUM_LENGTH',
+      label: 'Info',
+      value: 'aaaa',
+      reasons: { maximumLength: 3 }
+    }
   });
 
-  expect(validator('aaaaa', {})).resolves.toEqual({
-    type: 'ERROR_MAXIMUM_LENGTH',
-    label: 'Info',
+  checkValidator({
     value: 'aaaaa',
-    reasons: { maximumLength: 3 }
+    expected: {
+      type: 'ERROR_MAXIMUM_LENGTH',
+      label: 'Info',
+      value: 'aaaaa',
+      reasons: { maximumLength: 3 }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator('', {})).resolves.toBe(undefined);
-  expect(validator('a', {})).resolves.toBe(undefined);
-  expect(validator('aa', {})).resolves.toBe(undefined);
-  expect(validator('aaa', {})).resolves.toBe(undefined);
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: '', expected: undefined });
+  checkValidator({ value: 'a', expected: undefined });
+  checkValidator({ value: 'aa', expected: undefined });
+  checkValidator({ value: 'aaa', expected: undefined });
+
+  done();
 });
 
-test('minValue', () => {
+test('minValue', done => {
   const validator = makeMinValue('Age', 15);
 
-  expect(validator(1, {})).resolves.toEqual({
-    type: 'ERROR_MIN_VALUE',
-    label: 'Age',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: 1,
-    reasons: { minValue: 15 }
+    expected: {
+      type: 'ERROR_MIN_VALUE',
+      label: 'Age',
+      value: 1,
+      reasons: { minValue: 15 }
+    }
   });
 
-  expect(validator(14, {})).resolves.toEqual({
-    type: 'ERROR_MIN_VALUE',
-    label: 'Age',
+  checkValidator({
     value: 14,
-    reasons: { minValue: 15 }
+    expected: {
+      type: 'ERROR_MIN_VALUE',
+      label: 'Age',
+      value: 14,
+      reasons: { minValue: 15 }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator(15, {})).resolves.toBe(undefined);
-  expect(validator(16, {})).resolves.toBe(undefined);
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: 15, expected: undefined });
+  checkValidator({ value: 16, expected: undefined });
+
+  done();
 });
 
-test('maxValue', () => {
+test('maxValue', done => {
   const validator = makeMaxValue('Amount', 15);
 
-  expect(validator(99, {})).resolves.toEqual({
-    type: 'ERROR_MAX_VALUE',
-    label: 'Amount',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: 99,
-    reasons: { maxValue: 15 }
+    expected: {
+      type: 'ERROR_MAX_VALUE',
+      label: 'Amount',
+      value: 99,
+      reasons: { maxValue: 15 }
+    }
   });
 
-  expect(validator(16, {})).resolves.toEqual({
-    type: 'ERROR_MAX_VALUE',
-    label: 'Amount',
+  checkValidator({
     value: 16,
-    reasons: { maxValue: 15 }
+    expected: {
+      type: 'ERROR_MAX_VALUE',
+      label: 'Amount',
+      value: 16,
+      reasons: { maxValue: 15 }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator(15, {})).resolves.toBe(undefined);
-  expect(validator(14, {})).resolves.toBe(undefined);
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: 15, expected: undefined });
+  checkValidator({ value: 14, expected: undefined });
+
+  done();
 });
 
-test('number', () => {
+test('number', done => {
   const validator = makeNumber('Telephone');
 
-  expect(validator('noot', {})).resolves.toEqual({
-    type: 'ERROR_NUMBER',
-    label: 'Telephone',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: 'noot',
-    reasons: { regex: /^-?\d+$/ }
+    expected: {
+      type: 'ERROR_NUMBER',
+      label: 'Telephone',
+      value: 'noot',
+      reasons: { regex: /^-?\d+$/ }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator(15, {})).resolves.toBe(undefined);
-  expect(validator(14, {})).resolves.toBe(undefined);
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: 15, expected: undefined });
+  checkValidator({ value: 14, expected: undefined });
+
+  done();
 });
 
-test('numberFraction', () => {
+test('numberFraction', done => {
   const validator = makeNumberFraction('Telephone', 10);
 
-  expect(validator('noot', {})).resolves.toEqual({
-    type: 'ERROR_NUMBER_FRACTION',
-    label: 'Telephone',
+  const checkValidator = makeValidatorChecker(done, validator);
+
+  checkValidator({
     value: 'noot',
-    reasons: { regex: /^-?\d+(\.\d{1,10})?$/, fractionLength: 10 }
+    expected: {
+      type: 'ERROR_NUMBER_FRACTION',
+      label: 'Telephone',
+      value: 'noot',
+      reasons: { regex: /^-?\d+(\.\d{1,10})?$/, fractionLength: 10 }
+    }
   });
 
-  expect(validator(undefined, {})).resolves.toBe(undefined);
-  expect(validator(null, {})).resolves.toBe(undefined);
-  expect(validator(15, {})).resolves.toBe(undefined);
-  expect(validator(14, {})).resolves.toBe(undefined);
+  checkValidator({ value: undefined, expected: undefined });
+  checkValidator({ value: null, expected: undefined });
+  checkValidator({ value: 15, expected: undefined });
+  checkValidator({ value: 14, expected: undefined });
+
+  done();
 });

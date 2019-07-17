@@ -13,6 +13,7 @@ export type FieldType =
   | 'password'
   | 'file'
   | 'image'
+  | 'boolean'
   | 'text';
 
 export interface FieldConstraints {
