@@ -80,8 +80,13 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
         );
 
         if (fieldConstraints.required) {
-          const requiredValidator = Validators.makeRequired(label);
-          validatorFunctions.push(requiredValidator);
+          if (field === 'boolean') {
+            const requiredValidator = Validators.makeBooleanRequired(label);
+            validatorFunctions.push(requiredValidator);
+          } else {
+            const requiredValidator = Validators.makeRequired(label);
+            validatorFunctions.push(requiredValidator);
+          }
         }
 
         if (field === 'text') {

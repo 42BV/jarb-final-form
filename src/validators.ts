@@ -14,7 +14,28 @@ export function makeRequired(label: string): FieldValidator<any> {
   return function validateRequired(
     value: any
   ): Promise<RequiredError | undefined> {
-    if (value == null || value === '') {
+    if (value == null || value === '' || typeof value === 'boolean') {
+      const error: RequiredError = {
+        type: 'ERROR_REQUIRED',
+        label,
+        value,
+        reasons: {
+          required: 'required'
+        }
+      };
+
+      return Promise.resolve(error);
+    }
+
+    return Promise.resolve(undefined);
+  };
+}
+
+export function makeBooleanRequired(label: string): FieldValidator<any> {
+  return function validateBooleanRequired(
+    value: any
+  ): Promise<RequiredError | undefined> {
+    if (value !== true) {
       const error: RequiredError = {
         type: 'ERROR_REQUIRED',
         label,
