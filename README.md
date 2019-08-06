@@ -11,7 +11,7 @@ forms as well.
 
 # Installation
 
-`npm install jarb-final-form --save`
+`npm install @42.nl/jarb-final-form --save`
 
 # Documentation
 

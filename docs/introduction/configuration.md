@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Configuration
-description: 'Configuration instructions for jarb-final-form.'
+description: 'Configuration instructions for @42.nl/jarb-final-form.'
 parent: Introduction
 permalink: /configuration
 nav_order: 2
@@ -9,7 +9,7 @@ nav_order: 2
 
 ## Back-end
 
-First in your Java project make sure jarb-final-form can read
+First in your Java project make sure `@42.nl/jarb-final-form can read
 the constraints, via a GET request. This is easily done by 
 exposing the `BeanConstraintController` like so:
 
@@ -42,7 +42,7 @@ At the start of your project, in case you are using Create React
 App in the index.js, configure the constraints:
 
 ```js
-import { configureConstraint } from 'jarb-final-form';
+import { configureConstraint } from '@42.nl/jarb-final-form';
 
 configureConstraint({
    // The URL which will provide the constraints over a GET request.
@@ -62,7 +62,7 @@ to be loaded you need to be logged in, you should load the constraints
 as soon as you know that you are logged in:
 
 ```js
-import { loadConstraints } from 'jarb-final-form';
+import { loadConstraints } from '@42.nl/jarb-final-form';
 import { login } from 'somewhere';
 
 class Login extends Component {

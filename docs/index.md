@@ -2,7 +2,7 @@
 layout: default
 title: Introduction
 nav_order: 1
-description: 'Documentation for jarb-final-form.'
+description: 'Documentation for @42.nl/jarb-final-form.'
 has_children: true
 permalink: /
 ---

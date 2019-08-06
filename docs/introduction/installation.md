@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Installation
-description: 'Installation instructions for jarb-final-form.'
+description: 'Installation instructions for @42.nl/jarb-final-form.'
 parent: Introduction
 permalink: /installation
 nav_order: 1
@@ -10,11 +10,11 @@ nav_order: 1
 ### With npm
 
 ```
-npm install jarb-final-form --save
+npm install @42.nl/jarb-final-form --save
 ```
 
 ### Or with Yarn
 
 ```
-yarn add jarb-final-form
+yarn add @42.nl/jarb-final-form
 ```

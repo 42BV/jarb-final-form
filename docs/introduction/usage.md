@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Usage
-description: 'Usage instructions for jarb-final-form.'
+description: 'Usage instructions for @42.nl/jarb-final-form.'
 parent: Introduction
 permalink: /usage
 nav_order: 3
@@ -44,7 +44,7 @@ For example this object could be included in that array:
 Now you could create an Error Component to render the errors:
 
 ```js
-import { ValidationError } from 'jarb-final-form';
+import { ValidationError } from '@42.nl/jarb-final-form';
 import React, { Component } from 'react';
 
 interface Props {
