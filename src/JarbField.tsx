@@ -145,12 +145,12 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
         }
       } else {
         console.warn(
-          `jarb-final-form: constraints for "${validator}" not found, but a JarbField was rendered, this should not occur, check your validator.`
+          `@42.nl/jarb-final-form: constraints for "${validator}" not found, but a JarbField was rendered, this should not occur, check your validator.`
         );
       }
     } else {
       console.warn(
-        'jarb-final-form: constraints are empty, but a JarbField was rendered, this should not occur, make sure the constraints are loaded before the form is displayed.'
+        '@42.nl/jarb-final-form: constraints are empty, but a JarbField was rendered, this should not occur, make sure the constraints are loaded before the form is displayed.'
       );
     }
 

@@ -1,5 +1,5 @@
 remote_theme: 42bv/fortytwo
-title: 'jarb-final-form'
+title: '@42.nl/jarb-final-form'
 description: 'Validating forms through JaRB, with react-final-form'
 baseurl: /jarb-final-form/
 plugins:
