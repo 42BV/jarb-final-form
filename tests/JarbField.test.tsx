@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { Field } from 'react-final-form';
+import { FieldValidator } from 'final-form';
 
 import { configureConstraint } from '../src/config';
 import { setConstraints } from '../src/constraints';
 import { JarbField } from '../src/JarbField';
 import * as validators from '../src/validators';
 import { Constraints } from '../src/models';
-import { FieldValidator } from 'final-form';
 
 describe('Component: JarbField', () => {
   beforeEach(() => {
@@ -352,12 +352,29 @@ describe('Component: JarbField', () => {
 
   describe('enhancedValidate', () => {
     let validate: FieldValidator<number>;
+    let isNumber8Spy: jest.Mock<any, any>;
 
-    beforeEach(() => {
+    function setupEnhancedValidate({
+      asyncValidatorsDebounce
+    }: {
+      asyncValidatorsDebounce?: number;
+    }) {
       setup({});
+
+      const isNumber8: FieldValidator<number> = async value => {
+        return new Promise(resolve => {
+          setTimeout(
+            () => resolve(value === 8 ? undefined : 'Value is not 8'),
+            100
+          );
+        });
+      };
+
+      isNumber8Spy = jest.fn(isNumber8);
 
       const isEven: FieldValidator<number> = value =>
         value % 2 === 0 ? undefined : 'Not even';
+
       const isSmallerThan10: FieldValidator<number> = value =>
         value < 10 ? undefined : 'Bigger than 10';
 
@@ -366,15 +383,19 @@ describe('Component: JarbField', () => {
           name="Name"
           jarb={{ validator: 'Hero.name', label: 'Name' }}
           validators={[isEven, isSmallerThan10]}
+          asyncValidators={[isNumber8Spy]}
+          asyncValidatorsDebounce={asyncValidatorsDebounce}
           component="input"
         />
       );
 
       // @ts-ignore
       validate = jarbField.find(Field).props().validate;
-    });
+    }
 
     it('should filter out results which return undefined so only errors remain', async done => {
+      setupEnhancedValidate({});
+
       if (validate) {
         try {
           const errors = await validate(12, {});
@@ -389,13 +410,154 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should when there are no errors return undefined', async done => {
+    it('should when there are no errors perform async validations', async done => {
+      setupEnhancedValidate({});
+
       if (validate) {
         try {
-          const errors = await validate(2, {});
+          // @ts-ignore
+          const errors = await validate(2, {}, { name: 'Name' });
 
+          expect(errors).toEqual(['Value is not 8']);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should return undefined when both async and sync validation have no errors', async done => {
+      setupEnhancedValidate({});
+
+      if (validate) {
+        try {
+          // @ts-ignore
+          const errors = await validate(8, {}, { name: 'Name' });
           expect(errors).toEqual(undefined);
           done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should debounce with 200 milliseconds by default', async done => {
+      setupEnhancedValidate({});
+
+      if (validate) {
+        try {
+          // @ts-ignore
+          validate(2, {}, { name: 'Name' });
+
+          expect(isNumber8Spy).toBeCalledTimes(0);
+
+          setTimeout(() => {
+            expect(isNumber8Spy).toBeCalledTimes(0);
+          }, 199);
+
+          setTimeout(() => {
+            expect(isNumber8Spy).toBeCalledTimes(1);
+
+            done();
+          }, 201);
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should accept a custom debounce', async done => {
+      setupEnhancedValidate({ asyncValidatorsDebounce: 300 });
+
+      if (validate) {
+        try {
+          // @ts-ignore
+          validate(2, {}, { name: 'Name' });
+
+          expect(isNumber8Spy).toBeCalledTimes(0);
+
+          setTimeout(() => {
+            expect(isNumber8Spy).toBeCalledTimes(0);
+          }, 299);
+
+          setTimeout(() => {
+            expect(isNumber8Spy).toBeCalledTimes(1);
+
+            done();
+          }, 301);
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should when two async validations happen after each other cancel the first one', async done => {
+      setupEnhancedValidate({});
+
+      const validatePromises = [];
+
+      if (validate) {
+        try {
+          // @ts-ignore
+          validatePromises.push(validate(2, {}, { name: 'Name' }));
+          // @ts-ignore
+          validatePromises.push(validate(2, {}, { name: 'Name' }));
+
+          await Promise.all(validatePromises);
+
+          expect(isNumber8Spy).toBeCalledTimes(1);
+
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      } else {
+        done.fail();
+      }
+    });
+
+    it('should when two async validations happen after each and they both get called it should ignore the results from the first one', async done => {
+      setupEnhancedValidate({});
+
+      if (validate) {
+        try {
+          // Perform the initial call which should get ignored.
+
+          // @ts-ignore
+          const first = validate(2, {}, { name: 'Name' });
+
+          // Perform the second call after the debounce period, this
+          // should make it ignore the first result.
+
+          let second: Promise<any>;
+
+          setTimeout(() => {
+            // @ts-ignore
+            second = validate(4, {}, { name: 'Name' });
+          }, 250);
+
+          setTimeout(() => {
+            // They both should get called.
+            expect(isNumber8Spy).toBeCalledTimes(2);
+
+            Promise.all([first, second]).then(([firstResult, secondResult]) => {
+              // This call should not pass the identity check
+              expect(firstResult).toBe(undefined);
+
+              // This error does exists.
+              expect(secondResult).toEqual(['Value is not 8']);
+
+              done();
+            });
+          }, 1000);
         } catch (error) {
           done.fail(error);
         }

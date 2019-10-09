@@ -17,4 +17,4 @@ export function fractionNumberRegex(fractionLength: number): RegExp {
  * A regex which checks for a positive or negative number
  * without fractions.
  */
-export const numberRegex: RegExp = /^-?\d+$/;
+export const numberRegex = /^-?\d+$/;

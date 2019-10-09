@@ -4,3 +4,7 @@ description: 'Validating forms through JaRB, with react-final-form'
 baseurl: /jarb-final-form/
 plugins:
   - jekyll-remote-theme
+links:
+  - name: 'View on Github'
+    icon: 'https://unpkg.com/simple-icons@latest/icons/github.svg'
+    href: 'https://github.com/42BV/jarb-final-form'

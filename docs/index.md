@@ -1,10 +1,13 @@
 ---
-layout: default
-title: Introduction
-nav_order: 1
+layout: guide
+title: Guide
+nav_order: 0
 description: 'Documentation for @42.nl/jarb-final-form.'
 has_children: true
 permalink: /
+next:
+  url: installation
+  name: Installation
 ---
 
 [![Build Status](https://travis-ci.org/42BV/jarb-final-form.svg?branch=master)](https://travis-ci.org/42BV/jarb-final-form)

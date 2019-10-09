@@ -4,7 +4,7 @@ import { Constraints } from './models';
 let constraints: Constraints | undefined = undefined;
 
 // Throw error when not 200 otherwise parse response.
-function tryParse(response: Response): Promise<any> {
+export function tryParse(response: Response): Promise<any> {
   if (response.status !== 200) {
     throw response;
   } else {
