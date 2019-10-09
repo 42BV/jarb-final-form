@@ -16,3 +16,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vscode
+
+# jekyll
+*.gem
+.bundle
+.sass-cache
+_site
+Gemfile.lock

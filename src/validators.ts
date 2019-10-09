@@ -83,7 +83,6 @@ export function makeMaximumLength(
   return function validateMaximumLength(
     value: any
   ): Promise<MaximumLengthError | undefined> {
-    // @ts-ignore
     if (value != null && value.length > maximumLength) {
       const error: MaximumLengthError = {
         type: 'ERROR_MAXIMUM_LENGTH',

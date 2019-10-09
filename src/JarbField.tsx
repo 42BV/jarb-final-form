@@ -15,28 +15,61 @@ export interface JarbProps {
 export interface JarbFieldProps<FieldValue, T extends HTMLElement>
   extends FieldProps<FieldValue, T> {
   jarb: JarbProps;
+
+  /**
+   * An array of custom validators to run whenever the field changes.
+   *
+   * @type {FieldValidator<FieldValue>[]}
+   * @memberof JarbFieldProps
+   */
   validators?: FieldValidator<FieldValue>[];
+
+  /**
+   * An array of custom async validators to run whenever the field changes
+   * and the synchronous validators have declared the field valid.
+   *
+   * @type {FieldValidator<FieldValue>[]}
+   * @memberof JarbFieldProps
+   */
+  asyncValidators?: FieldValidator<FieldValue>[];
+
+  /**
+   * The time after which the async validators are ran to prevent
+   * to many validators from running at once.
+   *
+   * Defaults to 200 milliseconds.
+   *
+   * @type {number}
+   * @memberof JarbFieldProps
+   */
+  asyncValidatorsDebounce?: number;
 }
 
 /**
- * JarbField wrappes final-form's Field, and adds the auto validation
+ * JarbField wraps final-form's Field, and adds the auto validation
  * from the constraints. In fact it is a very thin wrapper around
  * Field.
  *
- * It only demands one extra property called 'jarb' which is used
- * to to configure the Field. The 'jarb' object needs two keys:
- * the 'validator' and the 'label'. 
+ * It only demands one extra property called `jarb` which is used
+ * to to configure the Field. The `jarb` object needs two keys:
+ * the `validator` and the `label`. 
  *
- * The 'validator' follows the following format: {Entity}.{Property}. 
+ * The `validator` follows the following format: `{Entity}.{Property}`. 
  * For example if the validator property is 'SuperHero.name' this means that
  * the Field will apply the constraints for the 'name' property of
- * the 'SuperHero' entity.
+ * the `SuperHero` entity.
  * 
- * The 'label' is used to inform you which field was wrong, when errors occur.
+ * The `label` is used to inform you which field was wrong, when errors occur.
  * You will receive the 'label' when an error occurs to create a nice
  * error message.
  * 
- * It is also possible to add custom field validators. Since 
+ * It is also possible to add custom field validators and async validators
+ * via the `validators` and `asyncValidators` props. The `asyncValidators`
+ * are only ran when the all synchronous `validators` have declared the
+ * field valid.
+ * 
+ * See the documentation for some examples on how to create custom
+ * validators.
  *
  * @example
  * ```JavaScript
@@ -58,16 +91,34 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
 > {
   private enhancedValidate: FieldValidator<FieldValue> | null = null;
 
+  // Stores a resolver which is used to debounce async validations
+  private debounceResolver = (
+    value?: boolean | PromiseLike<boolean> | undefined
+  ) => {};
+
+  // Stores a ID for each async validation train.
+  private validationId = Math.random();
+
   public getEnhancedValidate(): FieldValidator<FieldValue> | null {
     if (this.enhancedValidate !== null) {
       return this.enhancedValidate;
     }
 
-    const { jarb, validators } = this.props;
+    const {
+      jarb,
+      validators,
+      asyncValidators,
+      asyncValidatorsDebounce = 200
+    } = this.props;
     const { label, validator } = jarb;
 
     const validatorFunctions =
       Array.isArray(validators) && validators ? [...validators] : [];
+
+    const asyncValidatorFunctions =
+      Array.isArray(asyncValidators) && asyncValidators
+        ? [...asyncValidators]
+        : [];
 
     const constraints = getConstraints();
 
@@ -158,21 +209,68 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
       return null;
     }
 
-    this.enhancedValidate = (
+    this.enhancedValidate = async (
       value: FieldValue,
       allValues: object,
       meta?: FieldState<FieldValue>
     ) => {
-      const promises = validatorFunctions.map(validator =>
-        validator(value, allValues, meta)
-      );
-      return Promise.all(promises).then(values => {
-        const errors = values.filter(v => v !== undefined);
+      // Generate a new async id for this train of async validations.
+      this.validationId = Math.random();
 
-        // If there are no errors return undefined to indicate
-        // that everything is a-ok.
-        return errors.length === 0 ? undefined : errors;
+      // Store the id locally to this closure.
+      const id = this.validationId;
+
+      // Prevent the previous async check from occurring if possible.
+      this.debounceResolver(false);
+
+      // Perform synchronous validation
+      const results = await Promise.all(
+        validatorFunctions.map(validator => validator(value, allValues, meta))
+      );
+
+      const errors = results.filter(v => v !== undefined);
+
+      // If there are no synchronous errors, perform the asynchronous validation
+      if (errors.length > 0) {
+        return errors;
+      }
+
+      // We will only perform the asynchronous validation after 200 milliseconds
+      // to prevent repeatedly calling the back-end
+      const debouncePromise = new Promise<boolean>(resolve => {
+        // Prevent the previous async check from occurring if possible.
+        this.debounceResolver(false);
+
+        this.debounceResolver = resolve;
+
+        // After a debounce resolve with true.
+        window.setTimeout(() => {
+          resolve(true);
+        }, asyncValidatorsDebounce);
       });
+
+      const shouldPerformAsyncValidation = await debouncePromise;
+
+      if (!shouldPerformAsyncValidation) {
+        return undefined;
+      }
+
+      const asyncResults = await Promise.all(
+        asyncValidatorFunctions.map(validator =>
+          validator(value, allValues, meta)
+        )
+      );
+
+      // Only use the errors when they are still relevant.
+      if (this.validationId !== id) {
+        return undefined;
+      }
+
+      // If there are no errors return undefined to indicate
+      // that everything is a-ok.
+      const asyncErrors = asyncResults.filter(v => v !== undefined);
+
+      return asyncErrors.length === 0 ? undefined : asyncErrors;
     };
 
     return this.enhancedValidate;
