@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getConstraints } from './constraints';
 import { FieldValidator, FieldState } from 'final-form';
-import { Field, FieldProps } from 'react-final-form';
+import { Field, FieldProps, FieldRenderProps } from 'react-final-form';
 
 import { getFieldConstraintsFor, mostSpecificInputTypeFor } from './utils';
 import { FieldType } from './models';
@@ -11,9 +11,8 @@ export interface JarbProps {
   validator: string;
   label: string;
 }
-
 export interface JarbFieldProps<FieldValue, T extends HTMLElement>
-  extends FieldProps<FieldValue, T> {
+  extends FieldProps<FieldValue, FieldRenderProps<FieldValue>, T> {
   jarb: JarbProps;
 
   /**
@@ -94,7 +93,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
   // Stores a resolver which is used to debounce async validations
   private debounceResolver = (
     value?: boolean | PromiseLike<boolean> | undefined
-  ) => {};
+  ) => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 
   // Stores a ID for each async validation train.
   private validationId = Math.random();
