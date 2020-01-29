@@ -91,7 +91,9 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
   private enhancedValidate: FieldValidator<FieldValue> | null = null;
 
   // Stores a resolver which is used to debounce async validations
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private debounceResolver = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     value?: boolean | PromiseLike<boolean> | undefined
   ) => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 
@@ -208,6 +210,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
       return null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     this.enhancedValidate = async (
       value: FieldValue,
       allValues: object,

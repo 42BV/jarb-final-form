@@ -11,7 +11,7 @@ module.exports = {
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",
     indent: 'off',
     '@typescript-eslint/indent': ['off', 2],
-    'react/prop-types': [0] // Disable propTypes warning @see https://stackoverflow.com/questions/41746028/proptypes-in-a-typescript-react-application
+    '@typescript-eslint/no-explicit-any': ['off', 2]
   },
   settings:  {
     react:  {

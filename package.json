@@ -56,12 +56,15 @@
     "typescript": "3.7.5"
   },
   "scripts": {
+    "tsc": "tsc --version && tsc --noEmit",
     "start": "jest test --watch",
-    "test": "npm run lint && jest test --coverage",
+    "test": "jest test --coverage",
+    "test-all": "npm run lint && npm run tsc && npm test",
     "coverage": "npm test -- --coverage",
-    "ts": "tsc --version && tsc",
+    "clean": "rm -rf lib",
+    "build": "tsc --version && tsc",
     "lint": "eslint \"src/**\"",
-    "prepare": "rm -rf lib && npm run lint && npm test && npm run ts",
+    "prepare": "npm run clean && npm run test-all && npm run build",
     "release": "np --otp"
   },
   "jest": {

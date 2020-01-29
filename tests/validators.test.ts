@@ -132,17 +132,8 @@ test('booleanRequired', async done => {
     }
   });
 
-  checkValidator({
-    value: false,
-    expected: {
-      type: 'ERROR_REQUIRED',
-      label: 'Name',
-      value: false,
-      reasons: { required: 'required' }
-    }
-  });
-
   checkValidator({ value: true, expected: undefined });
+  checkValidator({ value: false, expected: undefined });
 
   done();
 });
