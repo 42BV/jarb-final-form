@@ -35,20 +35,20 @@ export function makeBooleanRequired(label: string): FieldValidator<any> {
   return function validateBooleanRequired(
     value: any
   ): Promise<RequiredError | undefined> {
-    if (value !== true) {
-      const error: RequiredError = {
-        type: 'ERROR_REQUIRED',
-        label,
-        value,
-        reasons: {
-          required: 'required'
-        }
-      };
-
-      return Promise.resolve(error);
+    if (value === true || value === false) {
+      return Promise.resolve(undefined);
     }
 
-    return Promise.resolve(undefined);
+    const error: RequiredError = {
+      type: 'ERROR_REQUIRED',
+      label,
+      value,
+      reasons: {
+        required: 'required'
+      }
+    };
+
+    return Promise.resolve(error);
   };
 }
 
