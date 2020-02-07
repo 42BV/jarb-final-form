@@ -7,6 +7,7 @@ import {
 
 // List of <input> types sorted on most specific first.
 const inputTypes: FieldType[] = [
+  'enum',
   'boolean',
   'color',
   'datetime-local',

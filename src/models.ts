@@ -1,4 +1,5 @@
 export type FieldType =
+  | 'enum'
   | 'color'
   | 'datetime-local'
   | 'datetime'
@@ -19,14 +20,14 @@ export type FieldType =
 export interface FieldConstraints {
   javaType: string;
   types: FieldType[];
-  required: boolean | null;
-  minimumLength: number | null;
-  maximumLength: number | null;
-  fractionLength: number | null;
-  radix: number | null;
-  pattern: string | null;
-  min: number | null;
-  max: number | null;
+  required?: boolean | null;
+  minimumLength?: number | null;
+  maximumLength?: number | null;
+  fractionLength?: number | null;
+  radix?: number | null;
+  pattern?: string | null;
+  min?: number | null;
+  max?: number | null;
   name: string;
 }
 
