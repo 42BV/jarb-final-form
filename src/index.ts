@@ -12,3 +12,14 @@ export {
   NumberFractionError,
   ValidationError
 } from './errors';
+export {
+  getFieldConstraints,
+  isRequired,
+  hasMinimumLength,
+  hasMaximumLength,
+  hasFractionLength,
+  hasRadix,
+  hasPattern,
+  hasMin,
+  hasMax
+} from './utils';
