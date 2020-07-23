@@ -4,6 +4,7 @@ import {
   ConstraintModel,
   FieldConstraints
 } from './models';
+import { getConstraints } from './constraints';
 
 // List of <input> types sorted on most specific first.
 const inputTypes: FieldType[] = [
@@ -82,4 +83,107 @@ export function getFieldConstraintsFor(
   } else {
     return false;
   }
+}
+
+/**
+ * Finds the FieldConstraints rules for a specific validator.
+ *
+ * If no constraints can be found for a validator the boolean false
+ * is returned.
+ *
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ * @returns FieldConstraints | false The constraints for the specific field
+ */
+export function getFieldConstraints(
+  validator: string
+): FieldConstraints | false {
+  const constraints = getConstraints();
+  if (!constraints) {
+    return false;
+  }
+
+  return getFieldConstraintsFor(validator, constraints);
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field required.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function isRequired(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && fieldConstraints.required === true;
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a minimum length.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasMinimumLength(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.minimumLength === 'number';
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a maximum length.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasMaximumLength(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.maximumLength === 'number';
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a fraction length.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasFractionLength(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return (
+    fieldConstraints && typeof fieldConstraints.fractionLength === 'number'
+  );
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a radix.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasRadix(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.radix === 'number';
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field comply to a pattern.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasPattern(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.pattern === 'string';
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a minimum.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasMin(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.min === 'number';
+}
+
+/**
+ * Determine if constraints tell a specific validator makes a field have a maximum.
+ * @param  validator 'validator' is a string with the format: 'Class.field' for example: 'User.age'
+ * @throws {error} When the validator doesn't match the format 'className.fieldName'.
+ */
+export function hasMax(validator: string): boolean {
+  const fieldConstraints = getFieldConstraints(validator);
+  return fieldConstraints && typeof fieldConstraints.max === 'number';
 }
