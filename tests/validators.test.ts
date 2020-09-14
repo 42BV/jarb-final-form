@@ -72,6 +72,29 @@ test('required', async done => {
   });
 
   checkValidator({
+    value: ' ',
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: ' ',
+      reasons: { required: 'required' }
+    }
+  });
+
+  checkValidator({
+    value: '  ',
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: '  ',
+      reasons: { required: 'required' }
+    }
+  });
+
+  // Prevent users from validating boolean values by always
+  // considering it an error, they should use `makeBooleanRequired`
+  // instead.
+  checkValidator({
     value: true,
     expected: {
       type: 'ERROR_REQUIRED',
@@ -92,6 +115,8 @@ test('required', async done => {
   });
 
   checkValidator({ value: 'h', expected: undefined });
+  checkValidator({ value: 'h ', expected: undefined });
+  checkValidator({ value: ' h ', expected: undefined });
   checkValidator({ value: 'henkie', expected: undefined });
 
   done();
