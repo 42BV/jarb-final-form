@@ -14,7 +14,15 @@ export function makeRequired(label: string): FieldValidator<any> {
   return function validateRequired(
     value: any
   ): Promise<RequiredError | undefined> {
-    if (value == null || value === '' || typeof value === 'boolean') {
+    if (
+      value == null ||
+      value === '' ||
+      // Prevent users from validating boolean values by always
+      // considering it an error, they should use `makeBooleanRequired`
+      // instead.
+      typeof value === 'boolean' ||
+      (typeof value === 'string' && value.trim() === '')
+    ) {
       const error: RequiredError = {
         type: 'ERROR_REQUIRED',
         label,
