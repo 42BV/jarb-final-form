@@ -17,7 +17,7 @@ export type FieldType =
   | 'boolean'
   | 'text';
 
-export interface FieldConstraints {
+export type FieldConstraints = {
   javaType: string;
   types: FieldType[];
   required?: boolean | null;
@@ -29,7 +29,7 @@ export interface FieldConstraints {
   min?: number | null;
   max?: number | null;
   name: string;
-}
+};
 
 export type ConstraintModel = Record<string, FieldConstraints>;
 
@@ -85,6 +85,6 @@ export type ConstraintModel = Record<string, FieldConstraints>;
  * }
  *
  */
-export interface Constraints {
+export type Constraints = {
   [key: string]: ConstraintModel;
-}
+};

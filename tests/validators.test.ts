@@ -11,20 +11,21 @@ import {
 import { ValidationError } from '../src/errors';
 
 type Validator = (
-  value: any,
-  form: any
+  value: unknown,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  form: object
 ) => Promise<ValidationError | undefined>;
 
-interface CheckValidator {
-  value: any;
-  expected: any;
-}
+type CheckValidator = {
+  value: unknown;
+  expected: unknown;
+};
 
 function makeValidatorChecker(
   done: jest.DoneCallback,
   validator: Validator
-): (options: CheckValidator) => Promise<any> {
-  return async function checkValidator(args: CheckValidator): Promise<any> {
+): (options: CheckValidator) => Promise<unknown> {
+  return async function checkValidator(args: CheckValidator): Promise<void> {
     const { value, expected } = args;
 
     try {
@@ -36,7 +37,9 @@ function makeValidatorChecker(
   };
 }
 
-test('required', async done => {
+test('required', async (done) => {
+  expect.assertions(11);
+
   const validator = makeRequired('Name');
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -122,7 +125,9 @@ test('required', async done => {
   done();
 });
 
-test('booleanRequired', async done => {
+test('booleanRequired', async (done) => {
+  expect.assertions(5);
+
   const validator = makeBooleanRequired('Name');
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -163,7 +168,9 @@ test('booleanRequired', async done => {
   done();
 });
 
-test('minimumLength', async done => {
+test('minimumLength', async (done) => {
+  expect.assertions(7);
+
   const validator = makeMinimumLength('Description', 3);
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -206,7 +213,7 @@ test('minimumLength', async done => {
   done();
 });
 
-test('maximumLength', done => {
+test('maximumLength', (done) => {
   const validator = makeMaximumLength('Info', 3);
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -241,7 +248,9 @@ test('maximumLength', done => {
   done();
 });
 
-test('minValue', done => {
+test('minValue', (done) => {
+  expect.assertions(6);
+
   const validator = makeMinValue('Age', 15);
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -274,7 +283,9 @@ test('minValue', done => {
   done();
 });
 
-test('maxValue', done => {
+test('maxValue', (done) => {
+  expect.assertions(6);
+
   const validator = makeMaxValue('Amount', 15);
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -307,7 +318,9 @@ test('maxValue', done => {
   done();
 });
 
-test('number', done => {
+test('number', (done) => {
+  expect.assertions(5);
+
   const validator = makeNumber('Telephone');
 
   const checkValidator = makeValidatorChecker(done, validator);
@@ -330,7 +343,9 @@ test('number', done => {
   done();
 });
 
-test('numberFraction', done => {
+test('numberFraction', (done) => {
+  expect.assertions(5);
+
   const validator = makeNumberFraction('Telephone', 10);
 
   const checkValidator = makeValidatorChecker(done, validator);

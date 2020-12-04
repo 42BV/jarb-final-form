@@ -10,6 +10,8 @@ import {
   NumberFractionError
 } from './errors';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export function makeRequired(label: string): FieldValidator<any> {
   return function validateRequired(
     value: any
@@ -183,7 +185,7 @@ export function makeNumberFraction(
 ): FieldValidator<any> {
   const regex = patterns.fractionNumberRegex(fractionLength);
 
-  return function validiateNumberFraction(
+  return function validateNumberFraction(
     value: any
   ): Promise<NumberFractionError | undefined> {
     if (value != null && regex.test(`${value}`) === false) {

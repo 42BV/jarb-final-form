@@ -1,66 +1,66 @@
-export interface RequiredError {
+export type RequiredError = {
   type: 'ERROR_REQUIRED';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     required: 'required';
   };
-}
+};
 
-export interface MinimumLengthError {
+export type MinimumLengthError = {
   type: 'ERROR_MINIMUM_LENGTH';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     minimumLength: number;
   };
-}
+};
 
-export interface MaximumLengthError {
+export type MaximumLengthError = {
   type: 'ERROR_MAXIMUM_LENGTH';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     maximumLength: number;
   };
-}
+};
 
-export interface MinValueError {
+export type MinValueError = {
   type: 'ERROR_MIN_VALUE';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     minValue: number;
   };
-}
+};
 
-export interface MaxValueError {
+export type MaxValueError = {
   type: 'ERROR_MAX_VALUE';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     maxValue: number;
   };
-}
+};
 
-export interface NumberError {
+export type NumberError = {
   type: 'ERROR_NUMBER';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     regex: RegExp;
   };
-}
+};
 
-export interface NumberFractionError {
+export type NumberFractionError = {
   type: 'ERROR_NUMBER_FRACTION';
   label: string;
-  value: any;
+  value: unknown;
   reasons: {
     regex: RegExp;
     fractionLength: number;
   };
-}
+};
 
 export type ValidationError =
   | RequiredError

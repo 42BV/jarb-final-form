@@ -7,10 +7,11 @@ import { getFieldConstraintsFor, mostSpecificInputTypeFor } from './utils';
 import { FieldType } from './models';
 import * as Validators from './validators';
 
-export interface JarbProps {
+export type JarbProps = {
   validator: string;
   label: string;
-}
+};
+
 export interface JarbFieldProps<FieldValue, T extends HTMLElement>
   extends FieldProps<FieldValue, FieldRenderProps<FieldValue>, T> {
   jarb: JarbProps;
@@ -94,7 +95,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private debounceResolver = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    value?: boolean | PromiseLike<boolean> | undefined
+    value: boolean | PromiseLike<boolean>
   ) => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 
   // Stores a ID for each async validation train.
@@ -213,6 +214,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     this.enhancedValidate = async (
       value: FieldValue,
+      // eslint-disable-next-line @typescript-eslint/ban-types
       allValues: object,
       meta?: FieldState<FieldValue>
     ) => {
@@ -227,10 +229,10 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
 
       // Perform synchronous validation
       const results = await Promise.all(
-        validatorFunctions.map(validator => validator(value, allValues, meta))
+        validatorFunctions.map((validator) => validator(value, allValues, meta))
       );
 
-      const errors = results.filter(v => v !== undefined);
+      const errors = results.filter((v) => v !== undefined);
 
       // If there are no synchronous errors, perform the asynchronous validation
       if (errors.length > 0) {
@@ -239,7 +241,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
 
       // We will only perform the asynchronous validation after 200 milliseconds
       // to prevent repeatedly calling the back-end
-      const debouncePromise = new Promise<boolean>(resolve => {
+      const debouncePromise = new Promise<boolean>((resolve) => {
         // Prevent the previous async check from occurring if possible.
         this.debounceResolver(false);
 
@@ -258,7 +260,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
       }
 
       const asyncResults = await Promise.all(
-        asyncValidatorFunctions.map(validator =>
+        asyncValidatorFunctions.map((validator) =>
           validator(value, allValues, meta)
         )
       );
@@ -270,7 +272,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
 
       // If there are no errors return undefined to indicate
       // that everything is a-ok.
-      const asyncErrors = asyncResults.filter(v => v !== undefined);
+      const asyncErrors = asyncResults.filter((v) => v !== undefined);
 
       return asyncErrors.length === 0 ? undefined : asyncErrors;
     };

@@ -4,7 +4,7 @@ import { Constraints } from './models';
 let constraints: Constraints | undefined = undefined;
 
 // Throw error when not 200 otherwise parse response.
-export function tryParse(response: Response): Promise<any> {
+export function tryParse(response: Response): Promise<Constraints> {
   if (response.status !== 200) {
     throw response;
   } else {
@@ -61,7 +61,7 @@ export function tryParse(response: Response): Promise<any> {
  *
  * @returns {Promise}
  */
-export async function loadConstraints(): Promise<any> {
+export async function loadConstraints(): Promise<void> {
   const { constraintsUrl, needsAuthentication } = getConfig();
   const config: RequestInit = needsAuthentication
     ? { credentials: 'include' }

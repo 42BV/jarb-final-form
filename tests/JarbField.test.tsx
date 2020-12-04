@@ -11,7 +11,7 @@ import { Constraints } from '../src/models';
 
 describe('Component: JarbField', () => {
   beforeEach(() => {
-    jest.spyOn(console, 'warn');
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
   function setup(constraints?: Constraints): void {
@@ -50,17 +50,19 @@ describe('Component: JarbField', () => {
   }
 
   describe('the validators prop', () => {
-    it('should when validators are provided by the user include them in the validation', async done => {
+    it('should when validators are provided by the user include them in the validation', async (done) => {
+      expect.assertions(1);
+
       setup(filledConstraints());
 
       // Should work with FieldValidators which return a Promise
-      const isBatman: FieldValidator<string> = value =>
+      const isBatman: FieldValidator<string> = (value) =>
         value !== 'Batman'
           ? Promise.resolve('Not Batman')
           : Promise.resolve(undefined);
 
       // Should work with FieldValidators which do not return a promise
-      const isRobin: FieldValidator<string> = value =>
+      const isRobin: FieldValidator<string> = (value) =>
         value !== 'Robin' ? 'Not Robin' : Promise.resolve(undefined);
 
       const jarbField = shallow(
@@ -94,6 +96,8 @@ describe('Component: JarbField', () => {
     });
 
     it('should when no custom validators are defined pass along undefined to Field ', () => {
+      expect.assertions(1);
+
       setup({});
 
       const jarbField = shallow(
@@ -109,6 +113,8 @@ describe('Component: JarbField', () => {
     });
 
     it('should when empty validators are defined pass along undefined to Field ', () => {
+      expect.assertions(1);
+
       setup({});
 
       const jarbField = shallow(
@@ -127,6 +133,8 @@ describe('Component: JarbField', () => {
 
   describe('situations when validation is not applied', () => {
     it('should when the constraints are empty warn the user', () => {
+      expect.assertions(5);
+
       setup(undefined);
 
       const jarbField = shallow(
@@ -149,6 +157,8 @@ describe('Component: JarbField', () => {
     });
 
     it('should when there are no FieldConstraints warn the user', () => {
+      expect.assertions(5);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -173,7 +183,9 @@ describe('Component: JarbField', () => {
   });
 
   describe('adding jarb validators', () => {
-    test('string which is required, and has minimumLength and maximumLength', async done => {
+    test('string which is required, and has minimumLength and maximumLength', async (done) => {
+      expect.assertions(9);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -219,6 +231,8 @@ describe('Component: JarbField', () => {
     });
 
     test('string without minimumLength and maximumLength', () => {
+      expect.assertions(6);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -239,7 +253,9 @@ describe('Component: JarbField', () => {
       expect(validators.makeMaximumLength).toHaveBeenCalledTimes(0);
     });
 
-    test('number with a min and max value', async done => {
+    test('number with a min and max value', async (done) => {
+      expect.assertions(9);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -280,7 +296,9 @@ describe('Component: JarbField', () => {
       }
     });
 
-    test('number with a fraction', async done => {
+    test('number with a fraction', async (done) => {
+      expect.assertions(5);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -315,7 +333,9 @@ describe('Component: JarbField', () => {
       }
     });
 
-    test('boolean which is required', async done => {
+    test('boolean which is required', async (done) => {
+      expect.assertions(5);
+
       setup(filledConstraints());
 
       const jarbField = shallow(
@@ -352,7 +372,7 @@ describe('Component: JarbField', () => {
 
   describe('enhancedValidate', () => {
     let validate: FieldValidator<number>;
-    let isNumber8Spy: jest.Mock<any, any>;
+    let isNumber8Spy: jest.Mock;
 
     function setupEnhancedValidate({
       asyncValidatorsDebounce
@@ -361,8 +381,8 @@ describe('Component: JarbField', () => {
     }) {
       setup({});
 
-      const isNumber8: FieldValidator<number> = async value => {
-        return new Promise(resolve => {
+      const isNumber8: FieldValidator<number> = async (value) => {
+        return new Promise((resolve) => {
           setTimeout(
             () => resolve(value === 8 ? undefined : 'Value is not 8'),
             100
@@ -372,10 +392,10 @@ describe('Component: JarbField', () => {
 
       isNumber8Spy = jest.fn(isNumber8);
 
-      const isEven: FieldValidator<number> = value =>
+      const isEven: FieldValidator<number> = (value) =>
         value % 2 === 0 ? undefined : 'Not even';
 
-      const isSmallerThan10: FieldValidator<number> = value =>
+      const isSmallerThan10: FieldValidator<number> = (value) =>
         value < 10 ? undefined : 'Bigger than 10';
 
       const jarbField = shallow(
@@ -389,11 +409,14 @@ describe('Component: JarbField', () => {
         />
       );
 
-      // @ts-ignore
-      validate = jarbField.find(Field).props().validate;
+      const props = jarbField.find(Field).props();
+
+      validate = props.validate;
     }
 
-    it('should filter out results which return undefined so only errors remain', async done => {
+    it('should filter out results which return undefined so only errors remain', async (done) => {
+      expect.assertions(1);
+
       setupEnhancedValidate({});
 
       if (validate) {
@@ -410,12 +433,14 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should when there are no errors perform async validations', async done => {
+    it('should when there are no errors perform async validations', async (done) => {
+      expect.assertions(1);
+
       setupEnhancedValidate({});
 
       if (validate) {
         try {
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           const errors = await validate(2, {}, { name: 'Name' });
 
           expect(errors).toEqual(['Value is not 8']);
@@ -428,14 +453,17 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should return undefined when both async and sync validation have no errors', async done => {
+    it('should return undefined when both async and sync validation have no errors', async (done) => {
+      expect.assertions(1);
+
       setupEnhancedValidate({});
 
       if (validate) {
         try {
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           const errors = await validate(8, {}, { name: 'Name' });
           expect(errors).toEqual(undefined);
+
           done();
         } catch (error) {
           done.fail(error);
@@ -445,12 +473,14 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should debounce with 200 milliseconds by default', async done => {
+    it('should debounce with 200 milliseconds by default', async (done) => {
+      expect.assertions(3);
+
       setupEnhancedValidate({});
 
       if (validate) {
         try {
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           validate(2, {}, { name: 'Name' });
 
           expect(isNumber8Spy).toBeCalledTimes(0);
@@ -472,12 +502,14 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should accept a custom debounce', async done => {
+    it('should accept a custom debounce', async (done) => {
+      expect.assertions(3);
+
       setupEnhancedValidate({ asyncValidatorsDebounce: 300 });
 
       if (validate) {
         try {
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           validate(2, {}, { name: 'Name' });
 
           expect(isNumber8Spy).toBeCalledTimes(0);
@@ -499,16 +531,18 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should when two async validations happen after each other cancel the first one', async done => {
+    it('should when two async validations happen after each other cancel the first one', async (done) => {
+      expect.assertions(1);
+
       setupEnhancedValidate({});
 
       const validatePromises = [];
 
       if (validate) {
         try {
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           validatePromises.push(validate(2, {}, { name: 'Name' }));
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           validatePromises.push(validate(2, {}, { name: 'Name' }));
 
           await Promise.all(validatePromises);
@@ -524,23 +558,25 @@ describe('Component: JarbField', () => {
       }
     });
 
-    it('should when two async validations happen after each and they both get called it should ignore the results from the first one', async done => {
+    it('should when two async validations happen after each and they both get called it should ignore the results from the first one', async (done) => {
+      expect.assertions(3);
+
       setupEnhancedValidate({});
 
       if (validate) {
         try {
           // Perform the initial call which should get ignored.
 
-          // @ts-ignore
+          // @ts-expect-error Mock fieldstate
           const first = validate(2, {}, { name: 'Name' });
 
           // Perform the second call after the debounce period, this
           // should make it ignore the first result.
 
-          let second: Promise<any>;
+          let second: Promise<unknown>;
 
           setTimeout(() => {
-            // @ts-ignore
+            // @ts-expect-error Mock fieldstate
             second = validate(4, {}, { name: 'Name' });
           }, 250);
 
