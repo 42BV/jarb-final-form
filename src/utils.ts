@@ -32,10 +32,18 @@ const inputTypes: FieldType[] = [
  * types is ['email', 'text'] the function returns 'email' because 'email'
  * is the most specific input type. If nothing is found returns 'text'.
  *
+ * If the types array is not defined or null 'text` is returned.
+ *
  * @param  {Array<string>} The types you want the closest type for.
  * @return {FieldType} The closest <input> type, based on the types parameter.
  */
-export function mostSpecificInputTypeFor(types: FieldType[]): FieldType {
+export function mostSpecificInputTypeFor(
+  types: FieldType[] | null | undefined
+): FieldType {
+  if (!types) {
+    return 'text';
+  }
+
   // Default to the last inputType which should be 'text'.
   let index = inputTypes.length - 1;
 
@@ -44,7 +52,6 @@ export function mostSpecificInputTypeFor(types: FieldType[]): FieldType {
     for (let j = 0; j < inputTypes.length; j += 1) {
       const inputType = inputTypes[j];
 
-      //console.log(`${type} === ${inputType}`);
       if (type === inputType) {
         index = Math.min(index, j);
         break;

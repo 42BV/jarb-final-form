@@ -15,6 +15,9 @@ import { Constraints } from '../src/models';
 import { setConstraints } from '../src';
 
 test('mostSpecificInputTypeFor', () => {
+  expect(mostSpecificInputTypeFor(undefined)).toBe('text');
+  expect(mostSpecificInputTypeFor(null)).toBe('text');
+
   expect(mostSpecificInputTypeFor([])).toBe('text');
   expect(
     mostSpecificInputTypeFor([
