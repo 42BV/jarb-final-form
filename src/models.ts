@@ -19,7 +19,7 @@ export type FieldType =
 
 export type FieldConstraints = {
   javaType: string;
-  types: FieldType[];
+  types?: FieldType[] | null;
   required?: boolean | null;
   minimumLength?: number | null;
   maximumLength?: number | null;
