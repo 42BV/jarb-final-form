@@ -26,7 +26,7 @@ describe('ConstraintsService', () => {
   });
 
   describe('loadConstraints', () => {
-    test('200 with authentication', async (done) => {
+    test('200 with authentication', async () => {
       expect.assertions(1);
 
       setup({ needsAuthentication: true });
@@ -45,11 +45,9 @@ describe('ConstraintsService', () => {
       expect(getConstraints()).toEqual({
         fake: 'constraints'
       });
-
-      done();
     });
 
-    test('200 without authentication', async (done) => {
+    test('200 without authentication', async () => {
       expect.assertions(1);
 
       setup({ needsAuthentication: false });
@@ -61,11 +59,9 @@ describe('ConstraintsService', () => {
       expect(getConstraints()).toEqual({
         fake: 'constraints'
       });
-
-      done();
     });
 
-    test('500', async (done) => {
+    test('500', async () => {
       expect.assertions(1);
 
       setup({ needsAuthentication: false });
@@ -74,10 +70,8 @@ describe('ConstraintsService', () => {
 
       try {
         await loadConstraints();
-        done.fail();
       } catch (response) {
         expect(getConstraints()).toEqual(undefined);
-        done();
       }
     });
   });

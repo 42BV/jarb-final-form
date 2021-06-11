@@ -248,7 +248,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
         this.debounceResolver = resolve;
 
         // After a debounce resolve with true.
-        window.setTimeout(() => {
+        setTimeout(() => {
           resolve(true);
         }, asyncValidatorsDebounce);
       });
