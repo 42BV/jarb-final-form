@@ -50,7 +50,7 @@ describe('Component: JarbField', () => {
   }
 
   describe('the validators prop', () => {
-    it('should when validators are provided by the user include them in the validation', async (done) => {
+    it('should when validators are provided by the user include them in the validation', async () => {
       expect.assertions(1);
 
       setup(filledConstraints());
@@ -76,22 +76,15 @@ describe('Component: JarbField', () => {
 
       const { validate } = jarbField.find(Field).props();
       if (validate) {
-        try {
-          const errors = await validate('H', {});
+        const errors = await validate('H', {});
 
-          expect(errors).toEqual([
-            'Not Batman',
-            'Not Robin',
-            'required',
-            'minimumLength',
-            'maximumLength'
-          ]);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual([
+          'Not Batman',
+          'Not Robin',
+          'required',
+          'minimumLength',
+          'maximumLength'
+        ]);
       }
     });
 
@@ -183,7 +176,7 @@ describe('Component: JarbField', () => {
   });
 
   describe('adding jarb validators', () => {
-    test('string which is required, and has minimumLength and maximumLength', async (done) => {
+    test('string which is required, and has minimumLength and maximumLength', async () => {
       expect.assertions(9);
 
       setup(filledConstraints());
@@ -213,20 +206,9 @@ describe('Component: JarbField', () => {
       expect(validators.makeMaximumLength).toHaveBeenCalledWith('Name', 255);
 
       if (validate) {
-        try {
-          const errors = await validate('Superman', {});
+        const errors = await validate('Superman', {});
 
-          expect(errors).toEqual([
-            'required',
-            'minimumLength',
-            'maximumLength'
-          ]);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual(['required', 'minimumLength', 'maximumLength']);
       }
     });
 
@@ -253,7 +235,7 @@ describe('Component: JarbField', () => {
       expect(validators.makeMaximumLength).toHaveBeenCalledTimes(0);
     });
 
-    test('number with a min and max value', async (done) => {
+    test('number with a min and max value', async () => {
       expect.assertions(9);
 
       setup(filledConstraints());
@@ -283,20 +265,13 @@ describe('Component: JarbField', () => {
       expect(validators.makeNumber).toHaveBeenCalledWith('Age');
 
       if (validate) {
-        try {
-          const errors = await validate('Superman', {});
+        const errors = await validate('Superman', {});
 
-          expect(errors).toEqual(['minValue', 'maxValue', 'number']);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual(['minValue', 'maxValue', 'number']);
       }
     });
 
-    test('number with a fraction', async (done) => {
+    test('number with a fraction', async () => {
       expect.assertions(5);
 
       setup(filledConstraints());
@@ -320,20 +295,13 @@ describe('Component: JarbField', () => {
       expect(validators.makeNumberFraction).toHaveBeenCalledWith('Salary', 4);
 
       if (validate) {
-        try {
-          const errors = await validate('Superman', {});
+        const errors = await validate('Superman', {});
 
-          expect(errors).toEqual(['numberFractions']);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual(['numberFractions']);
       }
     });
 
-    test('boolean which is required', async (done) => {
+    test('boolean which is required', async () => {
       expect.assertions(5);
 
       setup(filledConstraints());
@@ -356,16 +324,9 @@ describe('Component: JarbField', () => {
       expect(validators.makeBooleanRequired).toHaveBeenCalledTimes(1);
       expect(validators.makeBooleanRequired).toHaveBeenCalledWith('Name');
       if (validate) {
-        try {
-          const errors = await validate('Superman', {});
+        const errors = await validate('Superman', {});
 
-          expect(errors).toEqual(['booleanRequired']);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual(['booleanRequired']);
       }
     });
   });
@@ -411,127 +372,96 @@ describe('Component: JarbField', () => {
 
       const props = jarbField.find(Field).props();
 
-      validate = props.validate;
+      validate = props.validate as FieldValidator<number>;
     }
 
-    it('should filter out results which return undefined so only errors remain', async (done) => {
+    it('should filter out results which return undefined so only errors remain', async () => {
       expect.assertions(1);
 
       setupEnhancedValidate({});
 
       if (validate) {
-        try {
-          const errors = await validate(12, {});
-
-          expect(errors).toEqual(['Bigger than 10']);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        const errors = await validate(12, {});
+        expect(errors).toEqual(['Bigger than 10']);
       }
     });
 
-    it('should when there are no errors perform async validations', async (done) => {
+    it('should when there are no errors perform async validations', async () => {
       expect.assertions(1);
 
       setupEnhancedValidate({});
 
       if (validate) {
-        try {
-          // @ts-expect-error Mock fieldstate
-          const errors = await validate(2, {}, { name: 'Name' });
+        // @ts-expect-error Mock fieldstate
+        const errors = await validate(2, {}, { name: 'Name' });
 
-          expect(errors).toEqual(['Value is not 8']);
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(errors).toEqual(['Value is not 8']);
       }
     });
 
-    it('should return undefined when both async and sync validation have no errors', async (done) => {
+    it('should return undefined when both async and sync validation have no errors', async () => {
       expect.assertions(1);
 
       setupEnhancedValidate({});
 
       if (validate) {
-        try {
-          // @ts-expect-error Mock fieldstate
-          const errors = await validate(8, {}, { name: 'Name' });
-          expect(errors).toEqual(undefined);
-
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        // @ts-expect-error Mock fieldstate
+        const errors = await validate(8, {}, { name: 'Name' });
+        expect(errors).toEqual(undefined);
       }
     });
 
-    it('should debounce with 200 milliseconds by default', async (done) => {
+    it('should debounce with 200 milliseconds by default', (done) => {
       expect.assertions(3);
 
       setupEnhancedValidate({});
 
       if (validate) {
-        try {
-          // @ts-expect-error Mock fieldstate
-          validate(2, {}, { name: 'Name' });
+        // @ts-expect-error Mock fieldstate
+        validate(2, {}, { name: 'Name' });
 
+        setTimeout(() => {
           expect(isNumber8Spy).toBeCalledTimes(0);
+        }, 10);
 
-          setTimeout(() => {
-            expect(isNumber8Spy).toBeCalledTimes(0);
-          }, 199);
+        setTimeout(() => {
+          expect(isNumber8Spy).toBeCalledTimes(0);
+        }, 199);
 
-          setTimeout(() => {
-            expect(isNumber8Spy).toBeCalledTimes(1);
-
-            done();
-          }, 201);
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        setTimeout(() => {
+          expect(isNumber8Spy).toBeCalledTimes(1);
+          done();
+        }, 215);
+        // ideally we would set this on 201, but we have to wait for the async validation
+        // timeout which is started after a non-async validation promise is resolved
       }
     });
 
-    it('should accept a custom debounce', async (done) => {
+    it('should accept a custom debounce', (done) => {
       expect.assertions(3);
 
       setupEnhancedValidate({ asyncValidatorsDebounce: 300 });
 
       if (validate) {
-        try {
-          // @ts-expect-error Mock fieldstate
-          validate(2, {}, { name: 'Name' });
+        // @ts-expect-error Mock fieldstate
+        validate(2, {}, { name: 'Name' });
 
+        expect(isNumber8Spy).toBeCalledTimes(0);
+
+        setTimeout(() => {
           expect(isNumber8Spy).toBeCalledTimes(0);
+        }, 299);
 
-          setTimeout(() => {
-            expect(isNumber8Spy).toBeCalledTimes(0);
-          }, 299);
-
-          setTimeout(() => {
-            expect(isNumber8Spy).toBeCalledTimes(1);
-
-            done();
-          }, 301);
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        setTimeout(() => {
+          expect(isNumber8Spy).toBeCalledTimes(1);
+          done();
+        }, 315);
+        // ideally we would set this on 301, but we have to wait for the async validation
+        // timeout which is started after a non-async validation promise is resolved
       }
     });
 
-    it('should when two async validations happen after each other cancel the first one', async (done) => {
+    it('should when two async validations happen after each other cancel the first one', async () => {
       expect.assertions(1);
 
       setupEnhancedValidate({});
@@ -539,66 +469,52 @@ describe('Component: JarbField', () => {
       const validatePromises = [];
 
       if (validate) {
-        try {
-          // @ts-expect-error Mock fieldstate
-          validatePromises.push(validate(2, {}, { name: 'Name' }));
-          // @ts-expect-error Mock fieldstate
-          validatePromises.push(validate(2, {}, { name: 'Name' }));
+        // @ts-expect-error Mock fieldstate
+        validatePromises.push(validate(2, {}, { name: 'Name' }));
+        // @ts-expect-error Mock fieldstate
+        validatePromises.push(validate(2, {}, { name: 'Name' }));
 
-          await Promise.all(validatePromises);
+        await Promise.all(validatePromises);
 
-          expect(isNumber8Spy).toBeCalledTimes(1);
-
-          done();
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+        expect(isNumber8Spy).toBeCalledTimes(1);
       }
     });
 
-    it('should when two async validations happen after each and they both get called it should ignore the results from the first one', async (done) => {
+    it('should when two async validations happen after each and they both get called it should ignore the results from the first one', (done) => {
       expect.assertions(3);
 
       setupEnhancedValidate({});
 
       if (validate) {
-        try {
-          // Perform the initial call which should get ignored.
+        // Perform the initial call which should get ignored.
 
+        // @ts-expect-error Mock fieldstate
+        const first = validate(2, {}, { name: 'Name' });
+
+        // Perform the second call after the debounce period, this
+        // should make it ignore the first result.
+
+        let second: Promise<unknown>;
+
+        setTimeout(() => {
           // @ts-expect-error Mock fieldstate
-          const first = validate(2, {}, { name: 'Name' });
+          second = validate(4, {}, { name: 'Name' });
+        }, 250);
 
-          // Perform the second call after the debounce period, this
-          // should make it ignore the first result.
+        setTimeout(() => {
+          // They both should get called.
+          expect(isNumber8Spy).toBeCalledTimes(2);
 
-          let second: Promise<unknown>;
+          Promise.all([first, second]).then(([firstResult, secondResult]) => {
+            // This call should not pass the identity check
+            expect(firstResult).toBe(undefined);
 
-          setTimeout(() => {
-            // @ts-expect-error Mock fieldstate
-            second = validate(4, {}, { name: 'Name' });
-          }, 250);
+            // This error does exists.
+            expect(secondResult).toEqual(['Value is not 8']);
 
-          setTimeout(() => {
-            // They both should get called.
-            expect(isNumber8Spy).toBeCalledTimes(2);
-
-            Promise.all([first, second]).then(([firstResult, secondResult]) => {
-              // This call should not pass the identity check
-              expect(firstResult).toBe(undefined);
-
-              // This error does exists.
-              expect(secondResult).toEqual(['Value is not 8']);
-
-              done();
-            });
-          }, 1000);
-        } catch (error) {
-          done.fail(error);
-        }
-      } else {
-        done.fail();
+            done();
+          });
+        }, 1000);
       }
     });
   });
