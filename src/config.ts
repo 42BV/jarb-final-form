@@ -1,9 +1,6 @@
 export interface Config {
   // The URL which will provide the constraints over a GET request.
   constraintsUrl: string;
-
-  // Whether or not the 'constraintsUrl' should be called with authentication.
-  needsAuthentication: boolean;
 }
 
 let config: Config | null = null;
@@ -11,7 +8,7 @@ let config: Config | null = null;
 /**
  * Configures the Constraint libary.
  *
- * @param {Config} The new configuration
+ * @param {Config} c The new configuration
  */
 export function configureConstraint(c: Config): void {
   config = c;

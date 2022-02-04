@@ -42,8 +42,7 @@ describe('Component: JarbField', () => {
       .mockImplementation(() => () => 'numberFractions');
 
     configureConstraint({
-      constraintsUrl: '/api/constraints',
-      needsAuthentication: true
+      constraintsUrl: '/api/constraints'
     });
 
     setConstraints(constraints);
