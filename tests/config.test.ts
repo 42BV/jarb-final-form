@@ -8,8 +8,7 @@ test('configuration lifecycle', () => {
 
   // Next we initialize the config.
   const config: Config = {
-    constraintsUrl: '/api/constraints',
-    needsAuthentication: false
+    constraintsUrl: '/api/constraints'
   };
 
   configureConstraint(config);

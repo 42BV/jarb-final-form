@@ -1,4 +1,4 @@
-import fetchMock from 'fetch-mock';
+import * as SpringConnect from '@42.nl/spring-connect';
 
 import {
   loadConstraints,
@@ -8,51 +8,23 @@ import {
 import { configureConstraint } from '../src/config';
 
 describe('ConstraintsService', () => {
-  function setup({
-    needsAuthentication
-  }: {
-    needsAuthentication: boolean;
-  }): void {
+  function setup(): void {
     setConstraints(undefined);
 
     configureConstraint({
-      constraintsUrl: '/api/constraints',
-      needsAuthentication
+      constraintsUrl: '/api/constraints'
     });
   }
 
-  afterEach(() => {
-    fetchMock.restore();
-  });
-
   describe('loadConstraints', () => {
-    test('200 with authentication', async () => {
+    test('200', async () => {
       expect.assertions(1);
 
-      setup({ needsAuthentication: true });
+      setup();
 
-      fetchMock.get(
-        '/api/constraints',
-        { fake: 'constraints' },
-        {
-          // @ts-expect-error The "credentials" do actually exist
-          credentials: 'include'
-        }
-      );
-
-      await loadConstraints();
-
-      expect(getConstraints()).toEqual({
-        fake: 'constraints'
-      });
-    });
-
-    test('200 without authentication', async () => {
-      expect.assertions(1);
-
-      setup({ needsAuthentication: false });
-
-      fetchMock.get('/api/constraints', { fake: 'constraints' }, {});
+      jest
+        .spyOn(SpringConnect, 'get')
+        .mockResolvedValue({ fake: 'constraints' });
 
       await loadConstraints();
 
@@ -64,9 +36,9 @@ describe('ConstraintsService', () => {
     test('500', async () => {
       expect.assertions(1);
 
-      setup({ needsAuthentication: false });
+      setup();
 
-      fetchMock.get('/api/constraints', 500);
+      jest.spyOn(SpringConnect, 'get').mockRejectedValue('');
 
       try {
         await loadConstraints();
