@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/42BV/jarb-final-form#readme",
   "peerDependencies": {
-    "@42.nl/spring-connect": "^4.2|^5.0",
+    "@42.nl/spring-connect": "^4.2||^5.0",
     "final-form": "^4.20.6",
     "react-final-form": "^6.5.8"
   },
