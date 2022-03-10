@@ -53,7 +53,7 @@ let constraints: Constraints | undefined = undefined;
 export async function loadConstraints(): Promise<void> {
   const { constraintsUrl } = getConfig();
 
-  constraints = await get(constraintsUrl);
+  constraints = await get<Constraints>(constraintsUrl);
 }
 
 /**
