@@ -33,7 +33,7 @@ function makeValidatorChecker(
 }
 
 test('required', async () => {
-  expect.assertions(11);
+  expect.assertions(15);
 
   const validator = makeRequired('Name');
 
@@ -112,10 +112,32 @@ test('required', async () => {
     }
   });
 
+  await checkValidator({
+    value: [],
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: [],
+      reasons: { required: 'required' }
+    }
+  });
+
+  await checkValidator({
+    value: {},
+    expected: {
+      type: 'ERROR_REQUIRED',
+      label: 'Name',
+      value: {},
+      reasons: { required: 'required' }
+    }
+  });
+
   await checkValidator({ value: 'h', expected: undefined });
   await checkValidator({ value: 'h ', expected: undefined });
   await checkValidator({ value: ' h ', expected: undefined });
   await checkValidator({ value: 'henkie', expected: undefined });
+  await checkValidator({ value: { test: true }, expected: undefined });
+  await checkValidator({ value: ['test'], expected: undefined });
 });
 
 test('booleanRequired', async () => {

@@ -19,11 +19,13 @@ export function makeRequired(label: string): FieldValidator<any> {
     if (
       value == null ||
       value === '' ||
+      (typeof value === 'string' && value.trim() === '') ||
+      (Array.isArray(value) && value.length === 0) ||
+      (typeof value === 'object' && Object.keys(value).length === 0) ||
       // Prevent users from validating boolean values by always
       // considering it an error, they should use `makeBooleanRequired`
       // instead.
-      typeof value === 'boolean' ||
-      (typeof value === 'string' && value.trim() === '')
+      typeof value === 'boolean'
     ) {
       const error: RequiredError = {
         type: 'ERROR_REQUIRED',
