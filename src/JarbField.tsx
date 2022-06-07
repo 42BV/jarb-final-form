@@ -215,7 +215,7 @@ export class JarbField<FieldValue, T extends HTMLElement> extends Component<
     this.enhancedValidate = async (
       value: FieldValue,
       // eslint-disable-next-line @typescript-eslint/ban-types
-      allValues: object,
+      allValues?: object,
       meta?: FieldState<FieldValue>
     ) => {
       // Generate a new async id for this train of async validations.
