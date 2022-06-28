@@ -9,6 +9,7 @@ import {
   NumberError,
   NumberFractionError
 } from './errors';
+import { isDate } from 'lodash';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -21,7 +22,9 @@ export function makeRequired(label: string): FieldValidator<any> {
       value === '' ||
       (typeof value === 'string' && value.trim() === '') ||
       (Array.isArray(value) && value.length === 0) ||
-      (typeof value === 'object' && Object.keys(value).length === 0) ||
+      (typeof value === 'object' &&
+        !isDate(value) &&
+        Object.keys(value).length === 0) ||
       // Prevent users from validating boolean values by always
       // considering it an error, they should use `makeBooleanRequired`
       // instead.
