@@ -1,4 +1,4 @@
-import { fractionNumberRegex, numberRegex } from '../src/regex';
+import { defaultFractionNumberRegex, numberRegex } from '../src/regex';
 
 test('numberRegex', () => {
   expect(numberRegex.test('aap')).toBe(false);
@@ -14,8 +14,8 @@ test('numberRegex', () => {
   expect(numberRegex.test('-9999')).toBe(true);
 });
 
-test('fractionNumberRegex', () => {
-  const regex = fractionNumberRegex(5);
+test('defaultFractionNumberRegex', () => {
+  const regex = defaultFractionNumberRegex(5);
 
   expect(regex.test('aap')).toBe(false);
   expect(regex.test('24e')).toBe(false);

@@ -9,6 +9,7 @@ import { setConstraints } from '../src/constraints';
 import { JarbField, JarbProps } from '../src/JarbField';
 import * as validators from '../src/validators';
 import { Constraints } from '../src/models';
+import { defaultFractionNumberRegex } from '../lib/regex';
 
 describe('Component: JarbField', () => {
   beforeEach(() => {
@@ -249,7 +250,7 @@ describe('Component: JarbField', () => {
       expect(validators.makeNumber).toHaveBeenLastCalledWith('Age');
     });
 
-    test('number with a fraction', async () => {
+    test('number with a fraction (default pattern)', async () => {
       expect.assertions(2);
 
       setup({
@@ -266,7 +267,37 @@ describe('Component: JarbField', () => {
       expect(validators.makeNumberFraction).toHaveBeenCalled();
       expect(validators.makeNumberFraction).toHaveBeenLastCalledWith(
         'Salary',
-        4
+        4,
+        defaultFractionNumberRegex
+      );
+    });
+
+    test('number with a fraction (custom pattern)', async () => {
+      expect.assertions(2);
+
+      const func = (fractionLength: number) =>
+        new RegExp('^-?([\\d.]+,\\d{1,' + fractionLength + '}|\\d+)$');
+
+      setup({
+        constraints: filledConstraints(),
+        jarb: {
+          validator: 'Hero.salary',
+          label: 'Salary',
+          fractionalNumberRegex: func
+        }
+      });
+
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'abc' }
+      });
+
+      await screen.findAllByText('numberFractions');
+
+      expect(validators.makeNumberFraction).toHaveBeenCalled();
+      expect(validators.makeNumberFraction).toHaveBeenLastCalledWith(
+        'Salary',
+        4,
+        func
       );
     });
 

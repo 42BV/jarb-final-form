@@ -5,10 +5,21 @@ import { Field, FieldProps } from '@42.nl/final-form-field-validation';
 import { getFieldConstraintsFor, mostSpecificInputTypeFor } from './utils';
 import { FieldType } from './models';
 import * as Validators from './validators';
+import { defaultFractionNumberRegex } from './regex';
 
 export type JarbProps = {
   validator: string;
   label: string;
+
+  /*
+   * Function used to define the regular expression against
+   * which fractional numbers are validated. The fractional
+   * length differs per field and is thus supplied, the implementing
+   * function should use that in its implementation.
+   * If not supplied, the default implementation which uses periods
+   * for fractions is used.
+   */
+  fractionalNumberRegex?: (fractionLength: number) => RegExp;
 };
 
 export interface JarbFieldProps<FieldValue, T extends HTMLElement>
@@ -56,7 +67,11 @@ export function JarbField<FieldValue, T extends HTMLElement>(
   props: JarbFieldProps<FieldValue, T>
 ) {
   const {
-    jarb: { label, validator },
+    jarb: {
+      label,
+      validator,
+      fractionalNumberRegex = defaultFractionNumberRegex
+    },
     validators = [],
     ...fieldProps
   } = props;
@@ -124,7 +139,8 @@ export function JarbField<FieldValue, T extends HTMLElement>(
       ) {
         const patternValidator = Validators.makeNumberFraction(
           label,
-          fieldConstraints.fractionLength
+          fieldConstraints.fractionLength,
+          fractionalNumberRegex
         );
 
         validators.push(patternValidator);
