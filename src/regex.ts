@@ -9,7 +9,7 @@
  * @param  {number} fractionLength The length of the fraction which is considered valid.
  * @return {regex}                 A regex which checks for fraction numbers.
  */
-export function fractionNumberRegex(fractionLength: number): RegExp {
+export function defaultFractionNumberRegex(fractionLength: number): RegExp {
   return new RegExp('^-?\\d+(\\.\\d{1,' + fractionLength + '})?$');
 }
 

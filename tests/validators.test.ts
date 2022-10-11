@@ -9,6 +9,7 @@ import {
   makeNumberFraction
 } from '../src/validators';
 import { ValidationError } from '../src/errors';
+import { defaultFractionNumberRegex } from '../lib/regex';
 
 type Validator = (
   value: unknown,
@@ -352,7 +353,11 @@ test('number', async () => {
 test('numberFraction', async () => {
   expect.assertions(5);
 
-  const validator = makeNumberFraction('Telephone', 10);
+  const validator = makeNumberFraction(
+    'Telephone',
+    10,
+    defaultFractionNumberRegex
+  );
 
   const checkValidator = makeValidatorChecker(validator);
 

@@ -167,7 +167,7 @@ export function makeNumber(label: string): FieldValidator<any> {
   const regex = patterns.numberRegex;
 
   return function validateNumber(value: any): Promise<NumberError | undefined> {
-    if (value != null && regex.test(`${value}`) === false) {
+    if (value != null && !regex.test(`${value}`)) {
       const error: NumberError = {
         type: 'ERROR_NUMBER',
         label,
@@ -186,14 +186,14 @@ export function makeNumber(label: string): FieldValidator<any> {
 
 export function makeNumberFraction(
   label: string,
-  fractionLength: number
+  fractionLength: number,
+  fractionalNumberRegex: (fractionLength: number) => RegExp
 ): FieldValidator<any> {
-  const regex = patterns.fractionNumberRegex(fractionLength);
-
   return function validateNumberFraction(
     value: any
   ): Promise<NumberFractionError | undefined> {
-    if (value != null && regex.test(`${value}`) === false) {
+    const regex = fractionalNumberRegex(fractionLength);
+    if (value != null && !regex.test(`${value}`)) {
       const error: NumberFractionError = {
         type: 'ERROR_NUMBER_FRACTION',
         label,
