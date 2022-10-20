@@ -9,7 +9,7 @@ import { setConstraints } from '../src/constraints';
 import { JarbField, JarbProps } from '../src/JarbField';
 import * as validators from '../src/validators';
 import { Constraints } from '../src/models';
-import { defaultFractionNumberRegex } from '../lib/regex';
+import { defaultFractionNumberRegex } from '../src/regex';
 
 describe('Component: JarbField', () => {
   beforeEach(() => {
