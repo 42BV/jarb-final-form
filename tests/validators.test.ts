@@ -9,7 +9,7 @@ import {
   makeNumberFraction
 } from '../src/validators';
 import { ValidationError } from '../src/errors';
-import { defaultFractionNumberRegex } from '../lib/regex';
+import { defaultFractionNumberRegex } from '../src/regex';
 
 type Validator = (
   value: unknown,
