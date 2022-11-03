@@ -7,6 +7,8 @@ import {
 } from '../src/constraints';
 import { configureConstraint } from '../src/config';
 
+jest.mock('@42.nl/spring-connect');
+
 describe('ConstraintsService', () => {
   function setup(): void {
     setConstraints(undefined);
