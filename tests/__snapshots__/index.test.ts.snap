@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`index barrel: index-barrel 1`] = `
-Object {
+{
   "JarbField": [Function],
   "configureConstraint": [Function],
   "getConstraints": [Function],
