@@ -72,9 +72,11 @@ export function JarbField<FieldValue, T extends HTMLElement>(
       validator,
       fractionalNumberRegex = defaultFractionNumberRegex
     },
-    validators = [],
     ...fieldProps
   } = props;
+
+  // Validator array must be copied to prevent duplicates when pushing validators
+  const validators = props.validators ? [...props.validators] : [];
 
   const constraints = getConstraints();
 

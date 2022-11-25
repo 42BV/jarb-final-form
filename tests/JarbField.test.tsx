@@ -104,7 +104,7 @@ describe('Component: JarbField', () => {
       });
 
       await screen.findAllByText(
-        'Not Batman, Not Robin, required, minimumLength, maximumLength, required, minimumLength, maximumLength'
+        'Not Batman, Not Robin, required, minimumLength, maximumLength'
       );
     });
 
