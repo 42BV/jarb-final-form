@@ -27,13 +27,8 @@ if [ "$(docker ps -q -f name=verdaccio)" ]; then
 fi
 
 printf -- '\033[37m Starting verdaccio... \033[0m\n'
-docker run -d -it --rm --name verdaccio -p 4873:4873 verdaccio/verdaccio:4.2.1 >/dev/null 2>&1
+docker run -d -it --rm --name verdaccio verdaccio/verdaccio
 docker start verdaccio 2>&1
-until $(curl --output /dev/null --silent --head --fail http://localhost:4873); do
-    printf '.'
-    sleep 1
-done
-printf -- '\033[32m SUCCESS: Verdaccio is now running \033[0m\n'
 
 printf -- '\033[37m Creating verdaccio user... \033[0m\n'
 /usr/bin/expect <<EOD

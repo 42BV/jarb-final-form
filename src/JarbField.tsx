@@ -1,4 +1,3 @@
-import React from 'react';
 import { getConstraints } from './constraints';
 import { Field, FieldProps } from '@42.nl/final-form-field-validation';
 

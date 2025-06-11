@@ -44,7 +44,8 @@ describe('ConstraintsService', () => {
 
       try {
         await loadConstraints();
-      } catch (response) {
+      } catch {
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(getConstraints()).toEqual(undefined);
       }
     });

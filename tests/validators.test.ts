@@ -13,7 +13,6 @@ import { defaultFractionNumberRegex } from '../src/regex';
 
 type Validator = (
   value: unknown,
-  // eslint-disable-next-line @typescript-eslint/ban-types
   form: object
 ) => Promise<ValidationError | undefined>;
 
