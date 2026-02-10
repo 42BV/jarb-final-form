@@ -34,17 +34,12 @@ describe('ConstraintsService', () => {
     });
 
     test('500', async () => {
-      expect.assertions(1);
-
       setup();
 
       vi.spyOn(SpringConnect, 'get').mockRejectedValue('');
 
-      try {
-        await loadConstraints();
-      } catch {
-        expect(getConstraints()).toEqual(undefined);
-      }
+      await expect(loadConstraints()).rejects.toBe('');
+      expect(getConstraints()).toEqual(undefined);
     });
   });
 });
