@@ -1,45 +1,37 @@
 name: Node.js CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [20, 22, 24]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Setup timezone
-      uses: zcong1993/setup-timezone@v1.1.0
-      with:
-        timezone: Europe/Amsterdam
-    - run: npm install
-    - run: npm run lint
-    - run: npm run test:ts
-    - run: npm run test:coverage
-    - run: npm run tsc
-      env:
-        CI: true
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        directory: ./coverage
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
-        path_to_write_report: ./coverage/codecov_report.txt
-        verbose: true
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - name: Setup timezone
+        uses: zcong1993/setup-timezone@v2.0.0
+        with:
+          timezone: Europe/Amsterdam
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:ts
+      - run: npm run test:coverage
+      - run: npm run tsc
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == 24
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
