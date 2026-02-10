@@ -1,4 +1,4 @@
 beforeEach(() => {
-  jest.clearAllMocks();
-  jest.resetAllMocks();
+  vi.clearAllMocks();
+  vi.resetAllMocks();
 });

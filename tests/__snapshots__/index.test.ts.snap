@@ -1,8 +1,20 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`index barrel: index-barrel 1`] = `
+exports[`index barrel > index-barrel 1`] = `
 {
+  "Constraints": undefined,
+  "FieldType": undefined,
   "JarbField": [Function],
+  "JarbFieldProps": undefined,
+  "JarbProps": undefined,
+  "MaxValueError": undefined,
+  "MaximumLengthError": undefined,
+  "MinValueError": undefined,
+  "MinimumLengthError": undefined,
+  "NumberError": undefined,
+  "NumberFractionError": undefined,
+  "RequiredError": undefined,
+  "ValidationError": undefined,
   "configureConstraint": [Function],
   "getConstraints": [Function],
   "getFieldConstraints": [Function],

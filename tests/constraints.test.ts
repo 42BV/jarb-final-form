@@ -7,7 +7,7 @@ import {
 } from '../src/constraints';
 import { configureConstraint } from '../src/config';
 
-jest.mock('@42.nl/spring-connect');
+vi.mock('@42.nl/spring-connect');
 
 describe('ConstraintsService', () => {
   function setup(): void {
@@ -24,9 +24,7 @@ describe('ConstraintsService', () => {
 
       setup();
 
-      jest
-        .spyOn(SpringConnect, 'get')
-        .mockResolvedValue({ fake: 'constraints' });
+      vi.spyOn(SpringConnect, 'get').mockResolvedValue({ fake: 'constraints' });
 
       await loadConstraints();
 
@@ -40,12 +38,11 @@ describe('ConstraintsService', () => {
 
       setup();
 
-      jest.spyOn(SpringConnect, 'get').mockRejectedValue('');
+      vi.spyOn(SpringConnect, 'get').mockRejectedValue('');
 
       try {
         await loadConstraints();
       } catch {
-        // eslint-disable-next-line jest/no-conditional-expect
         expect(getConstraints()).toEqual(undefined);
       }
     });

@@ -34,24 +34,20 @@
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
-    "@types/jest": "29.5.14",
     "@types/jsdom": "21.1.7",
     "@types/lodash": "4.17.17",
     "@types/react": "19.1.7",
     "@types/react-dom": "19.1.6",
     "@typescript-eslint/eslint-plugin": "8.34.0",
     "@typescript-eslint/parser": "8.34.0",
+    "@vitest/coverage-istanbul": "3.0.5",
+    "@vitest/eslint-plugin": "1.1.36",
     "axios": "1.9.0",
     "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-jest": "28.13.0",
     "eslint-plugin-react": "7.37.5",
     "final-form": "5.0.0",
     "husky": "9.1.7",
-    "jest": "29.7.0",
-    "jest-environment-jsdom": "29.7.0",
-    "jest-mock-axios": "4.8.0",
-    "jest-watch-typeahead": "2.2.2",
     "jsdom": "26.1.0",
     "lint-staged": "16.1.0",
     "lodash": "4.17.21",
@@ -61,16 +57,16 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-final-form": "7.0.0",
-    "ts-jest": "29.3.4",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.34.0"
+    "typescript-eslint": "8.34.0",
+    "vitest": "3.0.5"
   },
   "scripts": {
-    "start": "jest --watch --coverage",
+    "start": "vitest --coverage",
     "clean": "rm -rf lib",
     "test": "npm run lint && npm run test:ts && npm run test:coverage",
     "test:ts": "tsc --version && tsc --noEmit",
-    "test:coverage": "jest test --no-cache --coverage",
+    "test:coverage": "vitest run --coverage",
     "docs": "jekyll serve --source docs",
     "tsc": "npm run clean && tsc --version && tsc",
     "lint": "npm run lint:test && npm run lint:src",
@@ -80,40 +76,6 @@
     "dev:publish": "./scripts/dev-publish.sh",
     "version": "npm run tsc && jekyll build",
     "prepare": "husky install"
-  },
-  "jest": {
-    "roots": [
-      "src",
-      "tests"
-    ],
-    "collectCoverageFrom": [
-      "./src/**/*.{ts,tsx}"
-    ],
-    "setupFilesAfterEnv": [
-      "./tests/setupTests.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "\\.tsx?$": "ts-jest"
-    },
-    "restoreMocks": true,
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
-    ],
-    "testEnvironment": "jsdom"
   },
   "lint-staged": {
     "{src,tests}/**/*.{js,jsx,json,scss,ts,tsx}": [

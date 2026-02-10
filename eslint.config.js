@@ -1,5 +1,5 @@
 import pluginPrettier from 'eslint-config-prettier';
-import pluginJest from 'eslint-plugin-jest';
+import pluginVitest from '@vitest/eslint-plugin';
 import pluginReact from 'eslint-plugin-react';
 import tseslint from 'typescript-eslint';
 
@@ -7,7 +7,7 @@ export default tseslint.config(
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReact.configs.flat['jsx-runtime'],
-  pluginJest.configs['flat/recommended'],
+  pluginVitest.configs.recommended,
   pluginPrettier,
   {
     languageOptions: {

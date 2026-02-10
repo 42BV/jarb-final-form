@@ -12,7 +12,7 @@ import { defaultFractionNumberRegex } from '../src/regex';
 
 describe('Component: JarbField', () => {
   beforeEach(() => {
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
   function setup({
@@ -24,31 +24,29 @@ describe('Component: JarbField', () => {
     jarb: JarbProps;
     fieldValidators?: FieldValidator<string>[];
   }) {
-    jest
-      .spyOn(validators, 'makeRequired')
-      .mockImplementation(() => () => 'required');
-    jest
-      .spyOn(validators, 'makeBooleanRequired')
-      .mockImplementation(() => () => 'booleanRequired');
-    jest
-      .spyOn(validators, 'makeMinimumLength')
-      .mockImplementation(() => () => 'minimumLength');
-    jest
-      .spyOn(validators, 'makeMaximumLength')
-      .mockImplementation(() => () => 'maximumLength');
-    jest
-      .spyOn(validators, 'makeMinValue')
-      .mockImplementation(() => () => 'minValue');
-    jest
-      .spyOn(validators, 'makeMaxValue')
-      .mockImplementation(() => () => 'maxValue');
-    jest
-      .spyOn(validators, 'makeNumber')
-      .mockImplementation(() => () => 'number');
+    vi.spyOn(validators, 'makeRequired').mockImplementation(
+      () => () => 'required'
+    );
+    vi.spyOn(validators, 'makeBooleanRequired').mockImplementation(
+      () => () => 'booleanRequired'
+    );
+    vi.spyOn(validators, 'makeMinimumLength').mockImplementation(
+      () => () => 'minimumLength'
+    );
+    vi.spyOn(validators, 'makeMaximumLength').mockImplementation(
+      () => () => 'maximumLength'
+    );
+    vi.spyOn(validators, 'makeMinValue').mockImplementation(
+      () => () => 'minValue'
+    );
+    vi.spyOn(validators, 'makeMaxValue').mockImplementation(
+      () => () => 'maxValue'
+    );
+    vi.spyOn(validators, 'makeNumber').mockImplementation(() => () => 'number');
 
-    jest
-      .spyOn(validators, 'makeNumberFraction')
-      .mockImplementation(() => () => 'numberFractions');
+    vi.spyOn(validators, 'makeNumberFraction').mockImplementation(
+      () => () => 'numberFractions'
+    );
 
     configureConstraint({
       constraintsUrl: '/api/constraints'
@@ -56,7 +54,7 @@ describe('Component: JarbField', () => {
 
     setConstraints(constraints);
 
-    const renderSpy = jest
+    const renderSpy = vi
       .fn()
       .mockImplementation(({ input, meta: { error } }) => (
         <div>
@@ -66,7 +64,7 @@ describe('Component: JarbField', () => {
       ));
 
     render(
-      <Form onSubmit={jest.fn()}>
+      <Form onSubmit={vi.fn()}>
         {() => (
           <JarbField name="Name" jarb={jarb} validators={fieldValidators}>
             {renderSpy}
