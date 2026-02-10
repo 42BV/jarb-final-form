@@ -75,7 +75,7 @@
     "release": "npm run tsc && np",
     "dev:publish": "./scripts/dev-publish.sh",
     "version": "npm run tsc && jekyll build",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "{src,tests}/**/*.{js,jsx,json,scss,ts,tsx}": [
